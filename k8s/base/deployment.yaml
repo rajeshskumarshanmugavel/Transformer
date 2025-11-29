@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: migrategenie-transformer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: migrategenie-transformer
+  template:
+    metadata:
+      labels:
+        app: migrategenie-transformer
+    spec:
+      containers:
+      - name: migrategenie-transformer
+        image: REPLACE_IMAGE
+        ports:
+        - containerPort: 80

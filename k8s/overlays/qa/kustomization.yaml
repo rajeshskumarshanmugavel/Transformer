@@ -1,0 +1,9 @@
+resources:
+  - ../../base
+  - hpa.yaml
+
+patches:
+  - path: deployment.yaml
+    target:
+      kind: Deployment
+      name: migrategenie-transformer

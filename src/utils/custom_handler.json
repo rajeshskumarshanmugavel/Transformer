@@ -1,0 +1,345 @@
+{
+  "servicenow": [
+    {
+      "source": "callerEmail",
+      "target": "email",
+      "entity": "incidents",
+      "uniqueIdentifier": "caller_id",
+      "lookup": {
+        "url": "/api/now/table/sys_user/{caller_id}",
+        "hasMore": false
+      }
+    },
+    {
+      "source": "callerName",
+      "target": "name",
+      "entity": "incidents",
+      "uniqueIdentifier": "caller_id",
+      "lookup": {
+        "url": "/api/now/table/sys_user/{caller_id}",
+        "hasMore": false
+      }
+    },
+    {
+      "source": "callerPhone",
+      "target": "phone",
+      "entity": "incidents",
+      "uniqueIdentifier": "caller_id",
+      "lookup": {
+        "url": "/api/now/table/sys_user/{caller_id}",
+        "hasMore": false
+      }
+    },
+    {
+      "source": "callerDepartment",
+      "target": "department",
+      "entity": "incidents",
+      "uniqueIdentifier": "caller_id",
+      "lookup": {
+        "url": "/api/now/table/sys_user/{caller_id}",
+        "hasMore": false
+      }
+    },
+    {
+      "source": "agentEmail",
+      "target": "email",
+      "entity": "incidents",
+      "uniqueIdentifier": "assigned_to",
+      "lookup": {
+        "url": "/api/now/table/sys_user/{assigned_to}",
+        "hasMore": false
+      }
+    },
+    {
+      "source": "agentName",
+      "target": "name",
+      "entity": "incidents",
+      "uniqueIdentifier": "assigned_to",
+      "lookup": {
+        "url": "/api/now/table/sys_user/{assigned_to}",
+        "hasMore": false
+      }
+    },
+    {
+      "source": "agentPhone",
+      "target": "phone",
+      "entity": "incidents",
+      "uniqueIdentifier": "assigned_to",
+      "lookup": {
+        "url": "/api/now/table/sys_user/{assigned_to}",
+        "hasMore": false
+      }
+    },
+    {
+      "source": "assignmentGroupName",
+      "target": "name",
+      "entity": "incidents",
+      "uniqueIdentifier": "assignment_group",
+      "lookup": {
+        "url": "/api/now/table/sys_user_group/{assignment_group}",
+        "hasMore": false
+      }
+    },
+    {
+      "source": "assignmentGroupManager",
+      "target": "manager",
+      "entity": "incidents",
+      "uniqueIdentifier": "assignment_group",
+      "lookup": {
+        "url": "/api/now/table/sys_user_group/{assignment_group}",
+        "hasMore": false
+      }
+    },
+    {
+      "source": "attachments",
+      "target": "file_content",
+      "entity": "incidents",
+      "uniqueIdentifier": "sys_id",
+      "lookup": {
+        "url": "/api/now/table/sys_attachment?sysparm_query=table_name=incident^table_sys_id={sys_id}",
+        "hasMore": true,
+        "uniqueIdentifier": "sys_id",
+        "lookup": {
+          "url": "/api/now/attachment/{sys_id}/file",
+          "hasMore": false
+        }
+      }
+    },
+    {
+      "source": "personEmail",
+      "target": "email",
+      "entity": "notes",
+      "uniqueIdentifier": "sys_created_by",
+      "lookup": {
+        "url": "/api/now/table/sys_user?sysparm_query=user_name={sys_created_by}",
+        "hasMore": false
+      }
+    },
+    {
+      "source": "assigneeEmail",
+      "target": "email",
+      "entity": "tasks",
+      "uniqueIdentifier": "assigned_to",
+      "lookup": {
+        "url": "/api/now/table/sys_user/{assigned_to}",
+        "hasMore": false
+      }
+    },
+    {
+      "source": "assigneeName",
+      "target": "name",
+      "entity": "tasks",
+      "uniqueIdentifier": "assigned_to",
+      "lookup": {
+        "url": "/api/now/table/sys_user/{assigned_to}",
+        "hasMore": false
+      }
+    },
+    {
+      "source": "assigneePhone",
+      "target": "phone",
+      "entity": "tasks",
+      "uniqueIdentifier": "assigned_to",
+      "lookup": {
+        "url": "/api/now/table/sys_user/{assigned_to}",
+        "hasMore": false
+      }
+    },
+    {
+      "source": "taskGroupName",
+      "target": "name",
+      "entity": "tasks",
+      "uniqueIdentifier": "assignment_group",
+      "lookup": {
+        "url": "/api/now/table/sys_user_group/{assignment_group}",
+        "hasMore": false
+      }
+    }
+  ],
+  "zendesk": [
+    {
+      "source": "requesterEmail",
+      "target": "email",
+      "entity": "tickets",
+      "uniqueIdentifier": "requester_id",
+      "lookup": {
+        "url": "/api/v2/users/{requester_id}",
+        "hasMore": false
+      }
+    },
+    {
+      "source": "requesterName",
+      "target": "name",
+      "entity": "tickets",
+      "uniqueIdentifier": "requester_id",
+      "lookup": {
+        "url": "/api/v2/users/{requester_id}",
+        "hasMore": false
+      }
+    },
+        {
+        "source": "agentEmail",
+        "target": "email",
+        "entity": "tickets",
+        "uniqueIdentifier": "assignee_id",
+        "lookup": {
+            "url": "/api/v2/users/{assignee_id}",
+            "hasMore": false
+        }
+    },
+    {
+        "source": "agentName",
+        "target": "name",
+        "entity": "tickets",
+        "uniqueIdentifier": "assignee_id",
+        "lookup": {
+            "url": "/api/v2/users/{assignee_id}",
+            "hasMore": false
+        }
+    },
+    {
+    "source": "groupName",
+    "target": "name",
+    "entity": "tickets",
+    "uniqueIdentifier": "group_id",
+    "lookup": {
+        "url": "/api/v2/groups/{group_id}",
+        "hasMore": false
+        }
+    },
+    {
+      "source": "personEmail",
+      "target": "email",
+      "entity": "conversations",
+      "uniqueIdentifier": "author_id",
+      "lookup": {
+        "url": "/api/v2/users/{author_id}",
+        "hasMore": false
+      }
+    }   
+  ],
+  "freshdesk": [
+    {
+        "source": "requesterEmail",
+        "target": "email",
+        "entity": "tickets",
+        "uniqueIdentifier": "requester_id",
+        "lookup": {
+            "url": "/api/v2/contacts/{requester_id}",
+            "hasMore": false
+        }
+    },
+    {
+        "source": "requesterName",
+        "target": "name",
+        "entity": "tickets",
+        "uniqueIdentifier": "requester_id",
+        "lookup": {
+            "url": "/api/v2/contacts/{requester_id}",
+            "hasMore": false
+        }
+    },
+    {
+        "source": "requesterPhone",
+        "target": "phone",
+        "entity": "tickets",
+        "uniqueIdentifier": "requester_id",
+        "lookup": {
+            "url": "/api/v2/contacts/{requester_id}",
+            "hasMore": false
+        }
+    },
+    {
+        "source": "agentEmail",
+        "target": "email",
+        "entity": "tickets",
+        "uniqueIdentifier": "responder_id",
+        "lookup": {
+            "url": "/api/v2/agents/{responder_id}",
+            "hasMore": false
+        }
+    },
+    {
+        "source": "agentName",
+        "target": "name",
+        "entity": "tickets",
+        "uniqueIdentifier": "responder_id",
+        "lookup": {
+            "url": "/api/v2/agents/{responder_id}",
+            "hasMore": false
+        }
+    },
+    {
+        "source": "groupName",
+        "target": "name",
+        "entity": "tickets",
+        "uniqueIdentifier": "group_id",
+        "lookup": {
+            "url": "/api/v2/groups/{group_id}",
+            "hasMore": false
+        }
+    }
+  ],
+  "freshservice": [
+    {
+        "source": "requesterEmail",
+        "target": "email",
+        "entity": "tickets",
+        "uniqueIdentifier": "requester_id",
+        "lookup": {
+            "url": "/api/v2/contacts/{requester_id}",
+            "hasMore": false
+        }
+    },
+    {
+        "source": "requesterName",
+        "target": "name",
+        "entity": "tickets",
+        "uniqueIdentifier": "requester_id",
+        "lookup": {
+            "url": "/api/v2/contacts/{requester_id}",
+            "hasMore": false
+        }
+    },
+    {
+        "source": "requesterPhone",
+        "target": "phone",
+        "entity": "tickets",
+        "uniqueIdentifier": "requester_id",
+        "lookup": {
+            "url": "/api/v2/contacts/{requester_id}",
+            "hasMore": false
+        }
+    },
+    {
+        "source": "agentEmail",
+        "target": "email",
+        "entity": "tickets",
+        "uniqueIdentifier": "responder_id",
+        "lookup": {
+            "url": "/api/v2/agents/{responder_id}",
+            "hasMore": false
+        }
+    },
+    {
+        "source": "agentName",
+        "target": "name",
+        "entity": "tickets",
+        "uniqueIdentifier": "responder_id",
+        "lookup": {
+            "url": "/api/v2/agents/{responder_id}",
+            "hasMore": false
+        }
+    },
+    {
+        "source": "groupName",
+        "target": "name",
+        "entity": "tickets",
+        "uniqueIdentifier": "group_id",
+        "lookup": {
+            "url": "/api/v2/groups/{group_id}",
+            "hasMore": false
+        }
+    }
+  ]
+}

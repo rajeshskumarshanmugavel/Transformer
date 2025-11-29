@@ -1,0 +1,13 @@
+requests
+azure-storage-blob
+fastapi
+uvicorn
+dotenv
+python-json-logger
+aiohttp
+pytest
+pytest-cov
+pytest-dotenv
+httpx
+python-dateutil>=2.8.2
+redis

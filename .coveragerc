@@ -1,0 +1,19 @@
+[run]
+branch = True
+source = src
+
+[report]
+omit =
+    */tests/*
+    src/connector/*
+
+show_missing = True
+
+skip_covered = False
+
+# REQUIRE at least 90% coverage to pass
+fail_under = 90
+
+[html]
+directory = coverage
+title = Transformer Coverage report

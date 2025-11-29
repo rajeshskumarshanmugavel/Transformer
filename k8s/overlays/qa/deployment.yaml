@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: migrategenie-transformer
+  namespace: qa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: migrategenie-transformer
+  template:
+    metadata:
+      labels:
+        app: migrategenie-transformer
+    spec:
+      containers:
+        - name: migrategenie-transformer
+          image: ''
+          envFrom:
+            - secretRef:
+                name: migrategenie-transformer-qa-secret
+          resources:
+            requests:
+              cpu: 256m
+              memory: 1Gi
+            limits:
+              cpu: 512m
+              memory: 2Gi
