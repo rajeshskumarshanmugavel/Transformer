@@ -51,7 +51,7 @@ coverage.xml
 .pytest_cache/
 cover/
 
-test/data/migration_configs/*
+#test/data/migration_configs/*
 
 # Translations
 *.mo
