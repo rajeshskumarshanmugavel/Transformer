@@ -1,0 +1,193 @@
+{
+  "name": "CSVtoFD_Local_Test",
+  "common": {
+    "source": {
+      "headers": [],
+      "authType": "None"
+    },
+    "target": {
+      "headers": [
+        {
+          "key": "apikey",
+          "req": false,
+          "value": "IEyET59ytSuFOJq85PH",
+          "description": ""
+        },
+        {
+          "key": "domainUrl",
+          "req": false,
+          "value": "globalinfocityteam",
+          "description": ""
+        },
+        {
+          "key": "instance_url",
+          "req": false,
+          "value": "https://globalinfocityteam.freshdesk.com",
+          "description": ""
+        }
+      ],
+      "authType": "Basic"
+    }
+  },
+  "source": {
+    "name": "tickets",
+    "sourceExecutor": {
+      "headers": [
+        {
+          "key": "azure_connection_string",
+          "req": false,
+          "value": "",
+          "description": "Leave empty for local file testing"
+        },
+        {
+          "key": "azure_container_name",
+          "req": false,
+          "value": "",
+          "description": "Leave empty for local file testing"
+        }
+      ],
+      "version": "v1",
+      "authType": "None",
+      "methodName": "get_csv_tickets_v1",
+      "queryParams": [
+        {
+          "key": "page[size]",
+          "req": false,
+          "value": "10",
+          "description": ""
+        },
+        {
+          "key": "filePath",
+          "req": false,
+          "value": "test/data/csv",
+          "description": "Local path to CSV files"
+        },
+        {
+          "key": "fileName",
+          "req": false,
+          "value": "1752675167770-SampleTickets3.csv",
+          "description": ""
+        }
+      ],
+      "methodParams": [
+        "queryParams",
+        "numberOfProcessedRecords"
+      ]
+    },
+    "dependentSources": [
+      {
+        "name": "conversations",
+        "sourceExecutor": {
+          "headers": [],
+          "version": "v1",
+          "authType": "None",
+          "methodName": "get_csv_conversations_v1",
+          "queryParams": [
+            {
+              "key": "ticket_id",
+              "req": false,
+              "value": "{{tickets.ticketid}}",
+              "description": ""
+            },
+            {
+              "key": "filePath",
+              "req": false,
+              "value": "test/data/csv",
+              "description": "Local path to CSV files"
+            },
+            {
+              "key": "fileName",
+              "req": false,
+              "value": "1752675184666-SampleComments 2.csv",
+              "description": ""
+            }
+          ],
+          "methodParams": [
+            "queryParams"
+          ]
+        },
+        "dependentSources": [],
+        "uniqueIdentifier": "{{conversations.ticketid}}"
+      }
+    ],
+    "uniqueIdentifier": "{{tickets.ticketid}}",
+    "sourceResponseType": ""
+  },
+  "target": {
+    "name": "tickets",
+    "isMainTarget": true,
+    "fieldMappings": [
+      {
+        "skip": false,
+        "sourcefield": "Subject",
+        "targetfield": "subject"
+      },
+      {
+        "skip": false,
+        "sourcefield": "Description",
+        "targetfield": "description"
+      },
+      {
+        "skip": false,
+        "sourcefield": "Priority",
+        "targetfield": "priority",
+        "override": [
+          {"sourcevalue": "Low", "targetvalue": 1},
+          {"sourcevalue": "Medium", "targetvalue": 2},
+          {"sourcevalue": "High", "targetvalue": 3},
+          {"sourcevalue": "Urgent", "targetvalue": 4}
+        ]
+      },
+      {
+        "skip": false,
+        "sourcefield": "Status",
+        "targetfield": "status",
+        "override": [
+          {"sourcevalue": "Open", "targetvalue": 2},
+          {"sourcevalue": "Pending", "targetvalue": 3},
+          {"sourcevalue": "Resolved", "targetvalue": 4},
+          {"sourcevalue": "Closed", "targetvalue": 5}
+        ]
+      },
+      {
+        "skip": false,
+        "sourcefield": "ContactEmail",
+        "targetfield": "email"
+      },
+      {
+        "skip": false,
+        "sourcefield": "ContactName",
+        "targetfield": "name"
+      },
+      {
+        "skip": false,
+        "sourcefield": "Attachments",
+        "targetfield": "attachments"
+      }
+    ],
+    "targetExecutor": {
+      "headers": [
+        {
+          "key": "domain",
+          "req": true,
+          "value": "",
+          "description": ""
+        },
+        {
+          "key": "apikey",
+          "req": true,
+          "value": "",
+          "description": ""
+        }
+      ],
+      "version": "v1",
+      "authType": "Basic",
+      "methodName": "create_freshdesk_ticket",
+      "queryParams": [],
+      "methodParams": ["body"]
+    },
+    "dependentTargets": [],
+    "uniqueIdentifier": "{{tickets.id}}",
+    "targetResponseType": "object"
+  }
+}

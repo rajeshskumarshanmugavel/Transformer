@@ -1,0 +1,2123 @@
+{
+    "common": {
+        "get_tickets": {
+            "{{meta.after_cursor}}": {
+                "status_code": 200,
+                "body": {
+                    "tickets": [
+                        {
+                            "id": 1001,
+                            "subject": "Test Ticket 1",
+                            "priority": "high",
+                            "first_name": "Ada",
+                            "last_name": "Lovelace",
+                            "city": "London",
+                            "tags": [
+                                "Bug",
+                                "Urgent"
+                            ],
+                            "custom_fields": {
+                                "source_cf_static_field": "a good cf static field default",
+                                "combined_cf_target": "Ada|Lovelace|London",
+                                "internal_id": "INT-001"
+                            }
+                        },
+                        {
+                            "id": 1002,
+                            "subject": "Test Ticket 2",
+                            "priority": "low",
+                            "tags": [
+                                "Feature"
+                            ],
+                            "source_dict_override": {
+                                "fruit": "apple",
+                                "vegetable": "carrot"
+                            },
+                            "custom_fields": {
+                                "source_cf_static_field": "a good cf static field default",
+                                "internal_id": "INT-002"
+                            }
+                        }
+                    ],
+                    "meta": {
+                        "after_cursor": "cursor2",
+                        "last_ticket_updated_at": "2023-10-01T12:00:00Z",
+                        "number_of_processed_records": 2
+                    }
+                }
+            },
+            "cursor2": {
+                "status_code": 200,
+                "body": {
+                    "tickets": [
+                        {
+                            "id": 1003,
+                            "subject": "Test Ticket 3",
+                            "priority": "medium",
+                            "tags": [
+                                "Incident"
+                            ],
+                            "custom_fields": {
+                                "source_cf_static_field": "a good cf static field default",
+                                "internal_id": "INT-003"
+                            }
+                        },
+                        {
+                            "id": 1004,
+                            "subject": "Test Ticket 4",
+                            "priority": "low",
+                            "tags": [
+                                "Task"
+                            ],
+                            "source_dict_override": {
+                                "fruit": "banana",
+                                "vegetable": "broccoli"
+                            },
+                            "source_list_override": [
+                                "banana",
+                                "broccoli"
+                            ],
+                            "custom_fields": {
+                                "source_cf_static_field": "a good cf static field default",
+                                "internal_id": "INT-004"
+                            }
+                        }
+                    ],
+                    "meta": {
+                        "after_cursor": "cursor3",
+                        "last_ticket_updated_at": "2023-10-01T12:00:00Z",
+                        "number_of_processed_records": 4
+                    }
+                }
+            },
+            "cursor3": {
+                "status_code": 200,
+                "body": {
+                    "tickets": [
+                        {
+                            "id": 1005,
+                            "subject": "Test Ticket 5",
+                            "priority": "high",
+                            "tags": [
+                                "Bug"
+                            ],
+                            "source_float_field": 0.987,
+                            "custom_fields": {
+                                "source_cf_static_field": "a good cf static field default",
+                                "internal_id": "INT-005"
+                            }
+                        },
+                        {
+                            "id": 1006,
+                            "subject": "Test Ticket 6",
+                            "priority": "medium",
+                            "tags": [
+                                "Support"
+                            ],
+                            "custom_fields": {
+                                "source_cf_static_field": "a good cf static field default",
+                                "internal_id": "INT-006"
+                            }
+                        }
+                    ],
+                    "meta": {
+                        "after_cursor": "cursor4",
+                        "last_ticket_updated_at": "2023-10-01T12:00:00Z",
+                        "number_of_processed_records": 6
+                    }
+                }
+            },
+            "cursor4": {
+                "status_code": 200,
+                "body": {
+                    "tickets": [
+                        {
+                            "id": 1007,
+                            "subject": "Test Ticket 7",
+                            "priority": "low",
+                            "tags": [
+                                "Feature"
+                            ],
+                            "custom_fields": {
+                                "source_cf_static_field": "a good cf static field default",
+                                "internal_id": "INT-007"
+                            }
+                        },
+                        {
+                            "id": 1008,
+                            "subject": "Test Ticket 8",
+                            "priority": "high",
+                            "tags": [
+                                "Incident"
+                            ],
+                            "source_dict_override": {
+                                "fruit": "apple",
+                                "vegetable": "carrot"
+                            },
+                            "custom_fields": {
+                                "source_cf_static_field": "a good cf static field default",
+                                "internal_id": "INT-008"
+                            }
+                        }
+                    ],
+                    "meta": {
+                        "after_cursor": "cursor5",
+                        "last_ticket_updated_at": "2023-10-01T12:00:00Z",
+                        "number_of_processed_records": 8
+                    }
+                }
+            },
+            "cursor5": {
+                "status_code": 200,
+                "body": {
+                    "tickets": [
+                        {
+                            "id": 1009,
+                            "subject": "Test Ticket 9",
+                            "priority": "medium",
+                            "tags": [
+                                "Task"
+                            ],
+                            "custom_fields": {
+                                "source_cf_static_field": "a good cf static field default",
+                                "internal_id": "INT-009"
+                            }
+                        },
+                        {
+                            "id": 1010,
+                            "subject": "Test Ticket 10",
+                            "priority": "low",
+                            "tags": [
+                                "Bug"
+                            ],
+                            "source_list_override": [
+                                "banana",
+                                "broccoli"
+                            ],
+                            "source_dict_override": {
+                                "fruit": "banana",
+                                "vegetable": "broccoli"
+                            },
+                            "source_float_field": "0.567",
+                            "custom_fields": {
+                                "source_cf_static_field": "a good cf static field default",
+                                "internal_id": "INT-010"
+                            }
+                        }
+                    ],
+                    "meta": {
+                        "after_cursor": "",
+                        "last_ticket_updated_at": "2023-10-01T12:00:00Z",
+                        "number_of_processed_records": 10
+                    }
+                }
+            }
+        },
+        "get_conversations": {
+            "status_code": 200,
+            "body": {
+                "conversations": [
+                    {
+                        "id": 2001,
+                        "ticket_id": 1001,
+                        "body": "Conversation 1"
+                    },
+                    {
+                        "id": 2002,
+                        "ticket_id": 1002,
+                        "body": "Conversation 2"
+                    },
+                    {
+                        "id": 2003,
+                        "ticket_id": 1003,
+                        "body": "Conversation 3"
+                    },
+                    {
+                        "id": 2004,
+                        "ticket_id": 1004,
+                        "body": "Conversation 4"
+                    },
+                    {
+                        "id": 2005,
+                        "ticket_id": 1005,
+                        "body": "Conversation 5"
+                    }
+                ]
+            }
+        },
+        "get_replies": {
+            "status_code": 200,
+            "body": {
+                "replies": [
+                    {
+                        "id": 3001,
+                        "conversation_id": 2001,
+                        "message": "Reply 1",
+                        "public": false
+                    },
+                    {
+                        "id": 3002,
+                        "conversation_id": 2002,
+                        "message": "Reply 2",
+                        "public": true
+                    },
+                    {
+                        "id": 3003,
+                        "conversation_id": 2003,
+                        "message": "Reply 3",
+                        "public": false
+                    },
+                    {
+                        "id": 3004,
+                        "conversation_id": 2004,
+                        "message": "Reply 4",
+                        "public": true
+                    },
+                    {
+                        "id": 3005,
+                        "conversation_id": 2005,
+                        "message": "Reply 5",
+                        "public": false
+                    }
+                ]
+            }
+        }
+    },
+    "happy_path": {
+        "migration_status": {
+            "status": "COMPLETED",
+            "entity": {
+                "tickets": {
+                    "1001": {
+                        "source_id": "1001",
+                        "target_id": "1",
+                        "status": "SUCCESS",
+                        "dependents": [
+                            {
+                                "conversations": {
+                                    "2001": {
+                                        "source_id": "2001",
+                                        "target_id": "1",
+                                        "status": "SUCCESS",
+                                        "dependents": [
+                                            {
+                                                "replies": {
+                                                    "3001": {
+                                                        "source_id": "3001",
+                                                        "target_id": "1",
+                                                        "status": "SUCCESS",
+                                                        "dependents": []
+                                                    },
+                                                    "3002": {
+                                                        "source_id": "3002",
+                                                        "target_id": "2",
+                                                        "status": "SUCCESS",
+                                                        "dependents": []
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "2002": {
+                                        "source_id": "2002",
+                                        "target_id": "2",
+                                        "status": "SUCCESS",
+                                        "dependents": []
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "1002": {
+                        "source_id": "1002",
+                        "target_id": "2",
+                        "status": "SUCCESS",
+                        "dependents": []
+                    },
+                    "1003": {
+                        "source_id": "1003",
+                        "target_id": "3",
+                        "status": "SUCCESS",
+                        "dependents": []
+                    },
+                    "1004": {
+                        "source_id": "1004",
+                        "target_id": "4",
+                        "status": "SUCCESS",
+                        "dependents": []
+                    },
+                    "1005": {
+                        "source_id": "1005",
+                        "target_id": "5",
+                        "status": "SUCCESS",
+                        "dependents": [
+                            {
+                                "conversations": {
+                                    "2003": {
+                                        "source_id": "2003",
+                                        "target_id": "3",
+                                        "status": "SUCCESS",
+                                        "dependents": [
+                                            {
+                                                "replies": {
+                                                    "3003": {
+                                                        "source_id": "3003",
+                                                        "target_id": "3",
+                                                        "status": "SUCCESS",
+                                                        "dependents": []
+                                                    },
+                                                    "3004": {
+                                                        "source_id": "3004",
+                                                        "target_id": "4",
+                                                        "status": "SUCCESS",
+                                                        "dependents": []
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "2004": {
+                                        "source_id": "2004",
+                                        "target_id": "4",
+                                        "status": "SUCCESS",
+                                        "dependents": []
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "1006": {
+                        "source_id": "1006",
+                        "target_id": "6",
+                        "status": "SUCCESS",
+                        "dependents": []
+                    },
+                    "1007": {
+                        "source_id": "1007",
+                        "target_id": "7",
+                        "status": "SUCCESS",
+                        "dependents": [
+                            {
+                                "conversations": {
+                                    "2005": {
+                                        "source_id": "2005",
+                                        "target_id": "5",
+                                        "status": "SUCCESS",
+                                        "dependents": [
+                                            {
+                                                "replies": {
+                                                    "3005": {
+                                                        "source_id": "3005",
+                                                        "target_id": "5",
+                                                        "status": "SUCCESS",
+                                                        "dependents": []
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "1008": {
+                        "source_id": "1008",
+                        "target_id": "8",
+                        "status": "SUCCESS",
+                        "dependents": []
+                    },
+                    "1009": {
+                        "source_id": "1009",
+                        "target_id": "9",
+                        "status": "SUCCESS",
+                        "dependents": []
+                    },
+                    "1010": {
+                        "source_id": "1010",
+                        "target_id": "10",
+                        "status": "SUCCESS",
+                        "dependents": []
+                    }
+                }
+            },
+            "count_status": {
+                "passed_records": 20,
+                "failed_records": 0,
+                "tickets": {
+                    "passed": 10,
+                    "failed": 0
+                }
+            }
+        },
+        "create_ticket": {
+            "transformed_body": [
+                {
+                    "subject": "Test Ticket 1",
+                    "priority": 3,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": "Ada|Lovelace|London",
+                        "cf_internal_id": "INT-001"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 2",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-002"
+                    },
+                    "target_dict_override": {
+                        "fruit": "apfel",
+                        "vegetable": "karotte"
+                    },
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 3",
+                    "priority": 2,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-003"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 4",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-004"
+                    },
+                    "target_dict_override": {
+                        "fruit": "banane",
+                        "vegetable": "brokkoli"
+                    },
+                    "target_list_override": [
+                        "banane",
+                        "brokkoli"
+                    ],
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 5",
+                    "priority": 3,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-005"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.987,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 6",
+                    "priority": 2,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-006"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 7",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-007"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 8",
+                    "priority": 3,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-008"
+                    },
+                    "target_dict_override": {
+                        "fruit": "apfel",
+                        "vegetable": "karotte"
+                    },
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 9",
+                    "priority": 2,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-009"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 10",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "target_list_override": [
+                        "banane",
+                        "brokkoli"
+                    ],
+                    "target_dict_override": {
+                        "fruit": "banane",
+                        "vegetable": "brokkoli"
+                    },
+                    "target_float_field": 0.567,
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-010"
+                    },
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                }
+            ]
+        },
+        "create_conversation": {
+            "transformed_body": [
+                {
+                    "body": "Conversation 1"
+                },
+                {
+                    "body": "Conversation 2"
+                },
+                {
+                    "body": "Conversation 3"
+                },
+                {
+                    "body": "Conversation 4"
+                },
+                {
+                    "body": "Conversation 5"
+                },
+                {
+                    "body": "Conversation 6"
+                },
+                {
+                    "body": "Conversation 7"
+                },
+                {
+                    "body": "Conversation 8"
+                },
+                {
+                    "body": "Conversation 9"
+                },
+                {
+                    "body": "Conversation 10"
+                }
+            ]
+        },
+        "create_reply": {
+            "transformed_body": [
+                {
+                    "text": "Reply 1",
+                    "private": true
+                },
+                {
+                    "text": "Reply 2",
+                    "private": false
+                },
+                {
+                    "text": "Reply 3",
+                    "private": true
+                },
+                {
+                    "text": "Reply 4",
+                    "private": false
+                },
+                {
+                    "text": "Reply 5",
+                    "private": true
+                },
+                {
+                    "text": "Reply 6",
+                    "private": true
+                },
+                {
+                    "text": "Reply 7",
+                    "private": true
+                },
+                {
+                    "text": "Reply 8",
+                    "private": true
+                },
+                {
+                    "text": "Reply 9",
+                    "private": true
+                },
+                {
+                    "text": "Reply 10",
+                    "private": true
+                }
+            ]
+        }
+    },
+    "happy_path_few_errors": {
+        "create_ticket": {
+            "transformed_body": [
+                {
+                    "subject": "Test Ticket 1",
+                    "priority": 3,
+                    "tags": [
+                        "Test"
+                    ],
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "cf_internal_id": "INT-001",
+                        "combined_cf_target": "Ada|Lovelace|London"
+                    },
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 2",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-002"
+                    },
+                    "target_dict_override": {
+                        "fruit": "apfel",
+                        "vegetable": "karotte"
+                    },
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 3",
+                    "priority": 2,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-003"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 4",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-004"
+                    },
+                    "target_dict_override": {
+                        "fruit": "banane",
+                        "vegetable": "brokkoli"
+                    },
+                    "target_list_override": [
+                        "banane",
+                        "brokkoli"
+                    ],
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 5",
+                    "priority": 3,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-005"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.987,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 6",
+                    "priority": 2,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-006"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 7",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-007"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 8",
+                    "priority": 3,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-008"
+                    },
+                    "target_dict_override": {
+                        "fruit": "apfel",
+                        "vegetable": "karotte"
+                    },
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 9",
+                    "priority": 2,
+                    "tags": [
+                        "Test"
+                    ],
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-009"
+                    },
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 10",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "target_list_override": [
+                        "banane",
+                        "brokkoli"
+                    ],
+                    "target_dict_override": {
+                        "fruit": "banane",
+                        "vegetable": "brokkoli"
+                    },
+                    "target_float_field": 0.567,
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-010"
+                    },
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                }
+            ],
+            "error_out": [
+                "1",
+                "9",
+                "10"
+            ]
+        },
+        "create_conversation": {
+            "transformed_body": [
+                {
+                    "body": "Conversation 1"
+                },
+                {
+                    "body": "Conversation 2"
+                },
+                {
+                    "body": "Conversation 3"
+                },
+                {
+                    "body": "Conversation 4"
+                },
+                {
+                    "body": "Conversation 5"
+                },
+                {
+                    "body": "Conversation 6"
+                },
+                {
+                    "body": "Conversation 7"
+                },
+                {
+                    "body": "Conversation 8"
+                },
+                {
+                    "body": "Conversation 9"
+                },
+                {
+                    "body": "Conversation 10"
+                }
+            ],
+            "error_out": [
+                "4"
+            ]
+        },
+        "create_reply": {
+            "transformed_body": [
+                {
+                    "text": "Reply 1",
+                    "private": true
+                },
+                {
+                    "text": "Reply 2",
+                    "private": false
+                },
+                {
+                    "text": "Reply 3",
+                    "private": true
+                },
+                {
+                    "text": "Reply 4",
+                    "private": false
+                },
+                {
+                    "text": "Reply 5",
+                    "private": true
+                },
+                {
+                    "text": "Reply 6",
+                    "private": true
+                },
+                {
+                    "text": "Reply 7",
+                    "private": true
+                },
+                {
+                    "text": "Reply 8",
+                    "private": true
+                },
+                {
+                    "text": "Reply 9",
+                    "private": true
+                },
+                {
+                    "text": "Reply 10",
+                    "private": true
+                }
+            ],
+            "error_out": [
+                "4"
+            ]
+        },
+        "migration_status": {
+            "entity": {
+                "tickets": {
+                    "1001": {
+                        "dependents": [],
+                        "source_id": "1001",
+                        "status": "FAILED",
+                        "target_id": null
+                    },
+                    "1002": {
+                        "dependents": [],
+                        "source_id": "1002",
+                        "status": "SUCCESS",
+                        "target_id": "2"
+                    },
+                    "1003": {
+                        "dependents": [],
+                        "source_id": "1003",
+                        "status": "SUCCESS",
+                        "target_id": "3"
+                    },
+                    "1004": {
+                        "dependents": [],
+                        "source_id": "1004",
+                        "status": "SUCCESS",
+                        "target_id": "4"
+                    },
+                    "1005": {
+                        "dependents": [
+                            {
+                                "conversations": {
+                                    "2003": {
+                                        "dependents": [
+                                            {
+                                                "replies": {
+                                                    "3003": {
+                                                        "dependents": [],
+                                                        "source_id": "3003",
+                                                        "status": "SUCCESS",
+                                                        "target_id": "3"
+                                                    },
+                                                    "3004": {
+                                                        "dependents": [],
+                                                        "source_id": "3004",
+                                                        "status": "FAILED",
+                                                        "target_id": null
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "source_id": "2003",
+                                        "status": "SUCCESS",
+                                        "target_id": "3"
+                                    },
+                                    "2004": {
+                                        "dependents": [],
+                                        "source_id": "2004",
+                                        "status": "FAILED",
+                                        "target_id": null
+                                    }
+                                }
+                            }
+                        ],
+                        "source_id": "1005",
+                        "status": "SUCCESS",
+                        "target_id": "5"
+                    },
+                    "1006": {
+                        "dependents": [],
+                        "source_id": "1006",
+                        "status": "SUCCESS",
+                        "target_id": "6"
+                    },
+                    "1007": {
+                        "dependents": [
+                            {
+                                "conversations": {
+                                    "2005": {
+                                        "dependents": [
+                                            {
+                                                "replies": {
+                                                    "3005": {
+                                                        "dependents": [],
+                                                        "source_id": "3005",
+                                                        "status": "SUCCESS",
+                                                        "target_id": "5"
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "source_id": "2005",
+                                        "status": "SUCCESS",
+                                        "target_id": "5"
+                                    }
+                                }
+                            }
+                        ],
+                        "source_id": "1007",
+                        "status": "SUCCESS",
+                        "target_id": "7"
+                    },
+                    "1008": {
+                        "dependents": [],
+                        "source_id": "1008",
+                        "status": "SUCCESS",
+                        "target_id": "8"
+                    },
+                    "1009": {
+                        "dependents": [],
+                        "source_id": "1009",
+                        "status": "FAILED",
+                        "target_id": null
+                    },
+                    "1010": {
+                        "dependents": [],
+                        "source_id": "1010",
+                        "status": "FAILED",
+                        "target_id": null
+                    }
+                }
+            },
+            "status": "COMPLETED",
+            "count_status": {
+                "passed_records": 11,
+                "failed_records": 5,
+                "tickets": {
+                    "passed": 7,
+                    "failed": 3
+                }
+            }
+        }
+    },
+    "happy_path_all_errors": {
+        "create_ticket": {
+            "transformed_body": [
+                {
+                    "subject": "Test Ticket 1",
+                    "priority": 3,
+                    "tags": [
+                        "Test"
+                    ],
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "cf_internal_id": "INT-001",
+                        "combined_cf_target": "Ada|Lovelace|London"
+                    },
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 2",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-002"
+                    },
+                    "target_dict_override": {
+                        "fruit": "apfel",
+                        "vegetable": "karotte"
+                    },
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 3",
+                    "priority": 2,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-003"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 4",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-004"
+                    },
+                    "target_dict_override": {
+                        "fruit": "banane",
+                        "vegetable": "brokkoli"
+                    },
+                    "target_list_override": [
+                        "banane",
+                        "brokkoli"
+                    ],
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 5",
+                    "priority": 3,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-005"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.987,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 6",
+                    "priority": 2,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-006"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 7",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-007"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 8",
+                    "priority": 3,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-008"
+                    },
+                    "target_dict_override": {
+                        "fruit": "apfel",
+                        "vegetable": "karotte"
+                    },
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 9",
+                    "priority": 2,
+                    "tags": [
+                        "Test"
+                    ],
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-009"
+                    },
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 10",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "target_list_override": [
+                        "banane",
+                        "brokkoli"
+                    ],
+                    "target_dict_override": {
+                        "fruit": "banane",
+                        "vegetable": "brokkoli"
+                    },
+                    "target_float_field": 0.567,
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-010"
+                    },
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                }
+            ],
+            "error_out": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10"
+            ]
+        },
+        "create_conversation": {
+            "transformed_body": [
+                {
+                    "body": "Conversation 1"
+                },
+                {
+                    "body": "Conversation 2"
+                },
+                {
+                    "body": "Conversation 3"
+                },
+                {
+                    "body": "Conversation 4"
+                },
+                {
+                    "body": "Conversation 5"
+                },
+                {
+                    "body": "Conversation 6"
+                },
+                {
+                    "body": "Conversation 7"
+                },
+                {
+                    "body": "Conversation 8"
+                },
+                {
+                    "body": "Conversation 9"
+                },
+                {
+                    "body": "Conversation 10"
+                }
+            ],
+            "error_out": [
+                "4"
+            ]
+        },
+        "create_reply": {
+            "transformed_body": [
+                {
+                    "text": "Reply 1",
+                    "private": true
+                },
+                {
+                    "text": "Reply 2",
+                    "private": false
+                },
+                {
+                    "text": "Reply 3",
+                    "private": true
+                },
+                {
+                    "text": "Reply 4",
+                    "private": false
+                },
+                {
+                    "text": "Reply 5",
+                    "private": true
+                },
+                {
+                    "text": "Reply 6",
+                    "private": true
+                },
+                {
+                    "text": "Reply 7",
+                    "private": true
+                },
+                {
+                    "text": "Reply 8",
+                    "private": true
+                },
+                {
+                    "text": "Reply 9",
+                    "private": true
+                },
+                {
+                    "text": "Reply 10",
+                    "private": true
+                }
+            ],
+            "error_out": [
+                "4"
+            ]
+        },
+        "migration_status": {
+            "status": "COMPLETED",
+            "entity": {
+                "tickets": {
+                    "1001": {
+                        "source_id": "1001",
+                        "target_id": null,
+                        "status": "FAILED",
+                        "dependents": []
+                    },
+                    "1002": {
+                        "source_id": "1002",
+                        "target_id": null,
+                        "status": "FAILED",
+                        "dependents": []
+                    },
+                    "1003": {
+                        "source_id": "1003",
+                        "target_id": null,
+                        "status": "FAILED",
+                        "dependents": []
+                    },
+                    "1004": {
+                        "source_id": "1004",
+                        "target_id": null,
+                        "status": "FAILED",
+                        "dependents": []
+                    },
+                    "1005": {
+                        "source_id": "1005",
+                        "target_id": null,
+                        "status": "FAILED",
+                        "dependents": []
+                    },
+                    "1006": {
+                        "source_id": "1006",
+                        "target_id": null,
+                        "status": "FAILED",
+                        "dependents": []
+                    },
+                    "1007": {
+                        "source_id": "1007",
+                        "target_id": null,
+                        "status": "FAILED",
+                        "dependents": []
+                    },
+                    "1008": {
+                        "source_id": "1008",
+                        "target_id": null,
+                        "status": "FAILED",
+                        "dependents": []
+                    },
+                    "1009": {
+                        "source_id": "1009",
+                        "target_id": null,
+                        "status": "FAILED",
+                        "dependents": []
+                    },
+                    "1010": {
+                        "source_id": "1010",
+                        "target_id": null,
+                        "status": "FAILED",
+                        "dependents": []
+                    }
+                }
+            },
+            "count_status": {
+                "passed_records": 0,
+                "failed_records": 10,
+                "tickets": {
+                    "passed": 0,
+                    "failed": 10
+                }
+            }
+        }
+    },
+    "happy_path_reattempt": {
+        "create_ticket": {
+            "transformed_body": [
+                {
+                    "subject": "Test Ticket 1",
+                    "priority": 3,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "cf_internal_id": "INT-001",
+                        "combined_cf_target": "Ada|Lovelace|London"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 2",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-002"
+                    },
+                    "target_dict_override": {
+                        "fruit": "apfel",
+                        "vegetable": "karotte"
+                    },
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 3",
+                    "priority": 2,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-003"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 4",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-004"
+                    },
+                    "target_dict_override": {
+                        "fruit": "banane",
+                        "vegetable": "brokkoli"
+                    },
+                    "target_list_override": [
+                        "banane",
+                        "brokkoli"
+                    ],
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 5",
+                    "priority": 3,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-005"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.987,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 6",
+                    "priority": 2,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-006"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 7",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-007"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 8",
+                    "priority": 3,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-008"
+                    },
+                    "target_dict_override": {
+                        "fruit": "apfel",
+                        "vegetable": "karotte"
+                    },
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 9",
+                    "priority": 2,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-009"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 10",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "target_list_override": [
+                        "banane",
+                        "brokkoli"
+                    ],
+                    "target_dict_override": {
+                        "fruit": "banane",
+                        "vegetable": "brokkoli"
+                    },
+                    "target_float_field": 0.567,
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-010"
+                    },
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                }
+            ]
+        },
+        "create_conversation": {
+            "transformed_body": [
+                {
+                    "body": "Conversation 1"
+                },
+                {
+                    "body": "Conversation 2"
+                },
+                {
+                    "body": "Conversation 3"
+                },
+                {
+                    "body": "Conversation 4"
+                },
+                {
+                    "body": "Conversation 5"
+                },
+                {
+                    "body": "Conversation 6"
+                },
+                {
+                    "body": "Conversation 7"
+                },
+                {
+                    "body": "Conversation 8"
+                },
+                {
+                    "body": "Conversation 9"
+                },
+                {
+                    "body": "Conversation 10"
+                }
+            ]
+        },
+        "create_reply": {
+            "transformed_body": [
+                {
+                    "text": "Reply 1",
+                    "private": true
+                },
+                {
+                    "text": "Reply 2",
+                    "private": false
+                },
+                {
+                    "text": "Reply 3",
+                    "private": true
+                },
+                {
+                    "text": "Reply 4",
+                    "private": false
+                },
+                {
+                    "text": "Reply 5",
+                    "private": true
+                },
+                {
+                    "text": "Reply 6",
+                    "private": true
+                },
+                {
+                    "text": "Reply 7",
+                    "private": true
+                },
+                {
+                    "text": "Reply 8",
+                    "private": true
+                },
+                {
+                    "text": "Reply 9",
+                    "private": true
+                },
+                {
+                    "text": "Reply 10",
+                    "private": true
+                }
+            ]
+        }
+    },
+    "termination": {
+        "migration_status": {
+            "status": "TERMINATED",
+            "entity": {
+                "tickets": {
+                    "1001": {
+                        "source_id": "1001",
+                        "target_id": "1",
+                        "status": "SUCCESS",
+                        "dependents": []
+                    },
+                    "1002": {
+                        "source_id": "1002",
+                        "target_id": "2",
+                        "status": "SUCCESS",
+                        "dependents": []
+                    }
+                }
+            },
+            "count_status": {
+                "passed_records": 2,
+                "failed_records": 0,
+                "tickets": {
+                    "passed": 2,
+                    "failed": 0
+                }
+            }
+        },
+        "create_ticket": {
+            "transformed_body": [
+                {
+                    "subject": "Test Ticket 1",
+                    "priority": 3,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "cf_internal_id": "INT-001",
+                        "combined_cf_target": "Ada|Lovelace|London"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 2",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-002"
+                    },
+                    "target_dict_override": {
+                        "fruit": "apfel",
+                        "vegetable": "karotte"
+                    },
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 3",
+                    "priority": 2,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-003"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 4",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-004"
+                    },
+                    "target_dict_override": {
+                        "fruit": "banane",
+                        "vegetable": "brokkoli"
+                    },
+                    "target_list_override": [
+                        "banane",
+                        "brokkoli"
+                    ],
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 5",
+                    "priority": 3,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-005"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.987,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 6",
+                    "priority": 2,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-006"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 7",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-007"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 8",
+                    "priority": 3,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-008"
+                    },
+                    "target_dict_override": {
+                        "fruit": "apfel",
+                        "vegetable": "karotte"
+                    },
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 9",
+                    "priority": 2,
+                    "tags": [
+                        "Test"
+                    ],
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-009"
+                    },
+                    "target_dict_override": null,
+                    "target_list_override": null,
+                    "target_float_field": 0.123,
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                },
+                {
+                    "subject": "Test Ticket 10",
+                    "priority": 1,
+                    "tags": [
+                        "Test"
+                    ],
+                    "target_list_override": [
+                        "banane",
+                        "brokkoli"
+                    ],
+                    "target_dict_override": {
+                        "fruit": "banane",
+                        "vegetable": "brokkoli"
+                    },
+                    "target_float_field": 0.567,
+                    "custom_fields": {
+                        "target_cf_static_field": "a good cf static field default",
+                        "combined_cf_target": null,
+                        "cf_internal_id": "INT-010"
+                    },
+                    "category_code": 999,
+                    "optional_target": null,
+                    "static_no_default": null
+                }
+            ]
+        },
+        "create_conversation": {
+            "transformed_body": [
+                {
+                    "body": "Conversation 1"
+                },
+                {
+                    "body": "Conversation 2"
+                },
+                {
+                    "body": "Conversation 3"
+                },
+                {
+                    "body": "Conversation 4"
+                },
+                {
+                    "body": "Conversation 5"
+                },
+                {
+                    "body": "Conversation 6"
+                },
+                {
+                    "body": "Conversation 7"
+                },
+                {
+                    "body": "Conversation 8"
+                },
+                {
+                    "body": "Conversation 9"
+                },
+                {
+                    "body": "Conversation 10"
+                }
+            ]
+        },
+        "create_reply": {
+            "transformed_body": [
+                {
+                    "text": "Reply 1",
+                    "private": true
+                },
+                {
+                    "text": "Reply 2",
+                    "private": false
+                },
+                {
+                    "text": "Reply 3",
+                    "private": true
+                },
+                {
+                    "text": "Reply 4",
+                    "private": false
+                },
+                {
+                    "text": "Reply 5",
+                    "private": true
+                },
+                {
+                    "text": "Reply 6",
+                    "private": true
+                },
+                {
+                    "text": "Reply 7",
+                    "private": true
+                },
+                {
+                    "text": "Reply 8",
+                    "private": true
+                },
+                {
+                    "text": "Reply 9",
+                    "private": true
+                },
+                {
+                    "text": "Reply 10",
+                    "private": true
+                }
+            ]
+        }
+    }
+}

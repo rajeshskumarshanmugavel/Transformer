@@ -1,0 +1,751 @@
+{
+  "name": "solarwinds changes to freshservice",
+  "common": {
+    "source": {
+      "headers": [
+        {
+          "key": "domainUrl",
+          "req": false,
+          "value": "saasgenieai.samanage.com",
+          "description": "Solarwinds Service Desk domain"
+        },
+        {
+          "key": "api_token",
+          "req": true,
+          "value": "eW9nYXByaXlhLmthbm5hbkBzYWFzZ2VuaWUuYWk=:eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX2lkIjoxMjgyODE4NywiZ2VuZXJhdGVkX2F0IjoiMjAyNS0xMS0yMyAxNjo1MjowMCJ9.gkQAfDJcyaR4jZjVVjq7-tK7BHTIzJ-kO76ndO_-7FHAXpP0Bw53-_A3cae6H5Vv_XpfAJuCyierzmviartRUw:VVM=",
+          "description": "JWT API token for Solarwinds authentication"
+        }
+      ],
+      "authType": "Bearer"
+    },
+    "target": {
+      "headers": [
+        {
+          "key": "apikey",
+          "req": false,
+          "value": "eFd5Yo25bCCUxxQW826",
+          "description": ""
+        },
+        {
+          "key": "domainUrl",
+          "req": false,
+          "value": "saasgenie",
+          "description": ""
+        },
+        {
+          "key": "instance_url",
+          "req": false,
+          "value": "https://saasgenie.freshservice.com",
+          "description": ""
+        }
+      ],
+      "authType": "Basic"
+    }
+  },
+  "source": {
+    "name": "changes",
+    "sourceExecutor": {
+      "headers": [
+        {
+          "key": "domainUrl",
+          "req": false,
+          "value": "saasgenieai.samanage.com",
+          "description": "Solarwinds Service Desk domain"
+        },
+        {
+          "key": "api_token",
+          "req": true,
+          "value": "eW9nYXByaXlhLmthbm5hbkBzYWFzZ2VuaWUuYWk=:eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX2lkIjoxMjgyODE4NywiZ2VuZXJhdGVkX2F0IjoiMjAyNS0xMS0yMyAxNjo1MjowMCJ9.gkQAfDJcyaR4jZjVVjq7-tK7BHTIzJ-kO76ndO_-7FHAXpP0Bw53-_A3cae6H5Vv_XpfAJuCyierzmviartRUw:VVM=",
+          "description": "JWT API token for Solarwinds authentication"
+        }
+      ],
+      "version": "v1",
+      "authType": "Bearer",
+      "methodName": "get_solarwinds_changes_v1",
+      "queryParams": [
+        {
+          "key": "limit",
+          "req": false,
+          "value": "10",
+          "description": "Number of changes to fetch per batch"
+        },
+        {
+          "key": "offset",
+          "req": false,
+          "value": "0",
+          "description": "Offset for pagination"
+        },
+        {
+          "key": "filters",
+          "req": false,
+          "value": "",
+          "description": "Optional filters for changes"
+        }
+      ],
+      "methodParams": [
+        "headers",
+        "queryParams",
+        "numberOfProcessedRecords"
+      ]
+    },
+    "dependentSources": [
+      {
+        "skip": true,
+        "name": "tasks",
+        "sourceExecutor": {
+          "headers": [
+            {
+              "key": "domainUrl",
+              "req": false,
+              "value": "saasgenieai.samanage.com",
+              "description": "Solarwinds Service Desk domain"
+            },
+            {
+              "key": "api_token",
+              "req": true,
+              "value": "eW9nYXByaXlhLmthbm5hbkBzYWFzZ2VuaWUuYWk=:eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX2lkIjoxMjgyODE4NywiZ2VuZXJhdGVkX2F0IjoiMjAyNS0xMS0yMyAxNjo1MjowMCJ9.gkQAfDJcyaR4jZjVVjq7-tK7BHTIzJ-kO76ndO_-7FHAXpP0Bw53-_A3cae6H5Vv_XpfAJuCyierzmviartRUw:VVM=",
+              "description": "JWT API token for Solarwinds authentication"
+            }
+          ],
+          "version": "v1",
+          "authType": "Bearer",
+          "methodName": "get_solarwinds_tasks_v1",
+          "queryParams": [
+            {
+              "key": "change_id",
+              "req": false,
+              "value": "{{changes.id}}",
+              "description": "Parent change ID"
+            }
+          ],
+          "methodParams": [
+            "headers",
+            "queryParams"
+          ]
+        },
+        "dependentSources": [],
+        "uniqueIdentifier": "{{tasks.id}}"
+      },
+      {
+        "skip": true,
+        "name": "notes",
+        "sourceExecutor": {
+          "headers": [
+            {
+              "key": "domainUrl",
+              "req": false,
+              "value": "saasgenieai.samanage.com",
+              "description": "Solarwinds Service Desk domain"
+            },
+            {
+              "key": "api_token",
+              "req": true,
+              "value": "eW9nYXByaXlhLmthbm5hbkBzYWFzZ2VuaWUuYWk=:eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX2lkIjoxMjgyODE4NywiZ2VuZXJhdGVkX2F0IjoiMjAyNS0xMS0yMyAxNjo1MjowMCJ9.gkQAfDJcyaR4jZjVVjq7-tK7BHTIzJ-kO76ndO_-7FHAXpP0Bw53-_A3cae6H5Vv_XpfAJuCyierzmviartRUw:VVM=",
+              "description": "JWT API token for Solarwinds authentication"
+            }
+          ],
+          "version": "v1",
+          "authType": "Bearer",
+          "methodName": "get_solarwinds_notes_v1",
+          "queryParams": [
+            {
+              "key": "change_id",
+              "req": false,
+              "value": "{{changes.id}}",
+              "description": "Parent change ID"
+            }
+          ],
+          "methodParams": [
+            "headers",
+            "queryParams"
+          ]
+        },
+        "dependentSources": [],
+        "uniqueIdentifier": "{{notes.id}}"
+      }
+    ],
+    "uniqueIdentifier": "{{changes.id}}",
+    "sourceResponseType": "array[object]"
+  },
+  "target": {
+    "name": "changes",
+    "isMainTarget": true,
+    "fieldMappings": [
+      {
+        "skip": false,
+        "type": "string",
+        "value": "",
+        "default": "Migrated from SolarWinds",
+        "override": [],
+        "required": true,
+        "attribute": "subject",
+        "description": "Subject of the change.",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "name",
+        "targetfield": "subject",
+        "attributeType": "text",
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "string",
+        "value": "",
+        "default": "No description provided.",
+        "override": [],
+        "required": true,
+        "attribute": "description",
+        "description": "HTML content of the change.",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "description",
+        "targetfield": "description",
+        "attributeType": "text",
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "string",
+        "value": "",
+        "default": "2025-12-01T00:00:00Z",
+        "override": [],
+        "required": true,
+        "attribute": "planned_start_date",
+        "description": "Planned start date of the change in ISO8601 format.",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "scheduled_for",
+        "targetfield": "planned_start_date",
+        "attributeType": "datetime",
+        "isSourceFieldAvailable": false,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "string",
+        "value": "",
+        "default": "2025-12-02T00:00:00Z",
+        "override": [],
+        "required": true,
+        "attribute": "planned_end_date",
+        "description": "Planned end date of the change in ISO8601 format.",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "end_time",
+        "targetfield": "planned_end_date",
+        "attributeType": "datetime",
+        "isSourceFieldAvailable": false,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "number",
+        "value": 1,
+        "default": 1,
+        "override": [
+          {
+            "sourcevalue": "Approval Requested",
+            "targetvalue": 1
+          },
+          {
+            "sourcevalue": "Planning",
+            "targetvalue": 1
+          },
+          {
+            "sourcevalue": "Awaiting Approval",
+            "targetvalue": 2
+          },
+          {
+            "sourcevalue": "Pending Release",
+            "targetvalue": 2
+          },
+          {
+            "sourcevalue": "Pending Review",
+            "targetvalue": 3
+          },
+          {
+            "sourcevalue": "Closed",
+            "targetvalue": 4
+          },
+          {
+            "sourcevalue": "Cancelled",
+            "targetvalue": 5
+          },
+          {
+            "sourcevalue": "Rejected",
+            "targetvalue": 6
+          }
+        ],
+        "required": true,
+        "attribute": "status",
+        "description": "Status of the change.",
+        "mappingType": "valueMapped",
+        "sourcefield": "state",
+        "targetfield": "status",
+        "attributeType": "number",
+        "mappingEnabled": true,
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "number",
+        "value": 2,
+        "default": 2,
+        "override": [
+          {
+            "sourcevalue": "Critical",
+            "targetvalue": 4
+          },
+          {
+            "sourcevalue": "High",
+            "targetvalue": 3
+          },
+          {
+            "sourcevalue": "Medium",
+            "targetvalue": 2
+          },
+          {
+            "sourcevalue": "Low",
+            "targetvalue": 1
+          }
+        ],
+        "required": true,
+        "attribute": "priority",
+        "description": "Priority of the change.",
+        "mappingType": "valueMapped",
+        "sourcefield": "priority",
+        "targetfield": "priority",
+        "attributeType": "number",
+        "mappingEnabled": true,
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "number",
+        "value": 1,
+        "default": 1,
+        "override": [
+          {
+            "sourcevalue": "Minor",
+            "targetvalue": 1
+          },
+          {
+            "sourcevalue": "Standard",
+            "targetvalue": 2
+          },
+          {
+            "sourcevalue": "Major",
+            "targetvalue": 3
+          },
+          {
+            "sourcevalue": "Emergency",
+            "targetvalue": 4
+          }
+        ],
+        "required": false,
+        "attribute": "risk",
+        "description": "Risk level of the change.",
+        "mappingType": "valueMapped",
+        "sourcefield": "risk",
+        "targetfield": "risk",
+        "attributeType": "number",
+        "mappingEnabled": true,
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "number",
+        "value": 1,
+        "default": 1,
+        "override": [
+          {
+            "sourcevalue": "Low",
+            "targetvalue": 1
+          },
+          {
+            "sourcevalue": "Medium",
+            "targetvalue": 2
+          },
+          {
+            "sourcevalue": "High",
+            "targetvalue": 3
+          }
+        ],
+        "required": false,
+        "attribute": "impact",
+        "description": "Impact level of the change.",
+        "mappingType": "valueMapped",
+        "sourcefield": "impact",
+        "targetfield": "impact",
+        "attributeType": "number",
+        "mappingEnabled": true,
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "number",
+        "value": 1,
+        "default": 1,
+        "override": [
+          {
+            "sourcevalue": "Minor",
+            "targetvalue": 1
+          },
+          {
+            "sourcevalue": "Standard",
+            "targetvalue": 2
+          },
+          {
+            "sourcevalue": "Major",
+            "targetvalue": 3
+          },
+          {
+            "sourcevalue": "Emergency",
+            "targetvalue": 4
+          }
+        ],
+        "required": false,
+        "attribute": "change_type",
+        "description": "Type of change.",
+        "mappingType": "valueMapped",
+        "sourcefield": "change_type",
+        "targetfield": "change_type",
+        "attributeType": "number",
+        "mappingEnabled": true,
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "string",
+        "value": "",
+        "default": "noreply@saasgenie.ai",
+        "override": [],
+        "required": true,
+        "attribute": "requester_email",
+        "description": "Email address of the requester.",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "requester.email",
+        "targetfield": "requester_email",
+        "attributeType": "text",
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "number",
+        "value": 24002588133,
+        "default": 24002588133,
+        "override": [
+          {
+            "sourcevalue": "sudha.rajesh@saasgenie.ai",
+            "targetvalue": 24002588133
+          }
+        ],
+        "required": false,
+        "attribute": "agent_id",
+        "description": "ID of the agent assigned to the change.",
+        "mappingType": "valueMapped",
+        "sourcefield": "assignee.email",
+        "targetfield": "agent_id",
+        "attributeType": "number",
+        "mappingEnabled": true,
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "number",
+        "value": 24000267577,
+        "default": 24000267577,
+        "override": [],
+        "required": false,
+        "attribute": "group_id",
+        "description": "ID of the group to which the change is assigned.",
+        "mappingType": "static",
+        "sourcefield": "",
+        "targetfield": "group_id",
+        "attributeType": "number",
+        "isSourceFieldAvailable": false,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "string",
+        "value": "",
+        "default": "",
+        "override": [],
+        "required": false,
+        "attribute": "change_plan",
+        "description": "Reason for Change - why the change is needed",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "change_plan",
+        "targetfield": "reason_for_change",
+        "attributeType": "text",
+        "isCustomField": true,
+        "customFieldKey": "planning_fields",
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "string",
+        "value": "",
+        "default": "",
+        "override": [],
+        "required": false,
+        "attribute": "rollback_plan",
+        "description": "Backout plan in case the change needs to be reverted",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "rollback_plan",
+        "targetfield": "backout_plan",
+        "attributeType": "text",
+        "isCustomField": true,
+        "customFieldKey": "planning_fields",
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "string",
+        "value": "",
+        "default": "",
+        "override": [],
+        "required": false,
+        "attribute": "category",
+        "description": "Category of the change",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "category.name",
+        "targetfield": "category",
+        "attributeType": "text",
+        "isSourceFieldAvailable": false,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "string",
+        "value": "",
+        "default": "",
+        "override": [],
+        "required": false,
+        "attribute": "sub_category",
+        "description": "Sub-category of the change",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "subcategory.name",
+        "targetfield": "sub_category",
+        "attributeType": "text",
+        "isSourceFieldAvailable": false,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "number",
+        "value": null,
+        "default": null,
+        "override": [],
+        "required": false,
+        "attribute": "department_id",
+        "description": "ID of the department initiating the change",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "department.id",
+        "targetfield": "department_id",
+        "attributeType": "number",
+        "isSourceFieldAvailable": false,
+        "showFieldOnInitialScreen": true
+      }
+    ],
+    "targetExecutor": {
+      "headers": [
+        {
+          "key": "domainUrl",
+          "req": true,
+          "value": "saasgenie",
+          "description": ""
+        },
+        {
+          "key": "apikey",
+          "req": true,
+          "value": "eFd5Yo25bCCUxxQW826",
+          "description": ""
+        }
+      ],
+      "version": "v1",
+      "authType": "Basic",
+      "methodName": "create_freshservice_changes",
+      "queryParams": [],
+      "methodParams": [
+        "body",
+        "headers"
+      ]
+    },
+    "dependentTargets": [
+      {
+        "skip": true,
+        "name": "tasks",
+        "fieldMappings": [
+          {
+            "skip": false,
+            "type": "string",
+            "value": "",
+            "default": "No title provided.",
+            "override": [],
+            "required": true,
+            "attribute": "title",
+            "description": "Task title",
+            "mappingType": "sourceAttribute",
+            "sourcefield": "name",
+            "targetfield": "title",
+            "attributeType": "text",
+            "isSourceFieldAvailable": true,
+            "showFieldOnInitialScreen": true
+          },
+          {
+            "skip": false,
+            "type": "string",
+            "value": "",
+            "default": "No description provided.",
+            "override": [],
+            "required": true,
+            "attribute": "description",
+            "description": "Task description",
+            "mappingType": "sourceAttribute",
+            "sourcefield": "description",
+            "targetfield": "description",
+            "attributeType": "text",
+            "isSourceFieldAvailable": true,
+            "showFieldOnInitialScreen": true
+          }
+        ],
+        "targetExecutor": {
+          "headers": [
+            {
+              "key": "domainUrl",
+              "req": true,
+              "value": "saasgenie",
+              "description": ""
+            },
+            {
+              "key": "apikey",
+              "req": true,
+              "value": "eFd5Yo25bCCUxxQW826",
+              "description": ""
+            }
+          ],
+          "version": "v1",
+          "methodName": "create_freshservice_change_tasks",
+          "queryParams": [
+            {
+              "key": "change_id",
+              "req": true,
+              "value": "{{changes.change.id}}",
+              "description": ""
+            },
+            {
+              "key": "migrate_as",
+              "req": true,
+              "value": "tasks",
+              "description": ""
+            }
+          ],
+          "methodParams": [
+            "body",
+            "queryParams"
+          ]
+        },
+        "dependentTargets": [],
+        "uniqueIdentifier": "{{tasks.task.id}}",
+        "targetResponseType": "object"
+      },
+      {
+        "skip": true,
+        "name": "notes",
+        "fieldMappings": [
+          {
+            "skip": false,
+            "type": "string",
+            "value": "",
+            "default": "No content provided.",
+            "override": [],
+            "required": true,
+            "attribute": "body",
+            "description": "Content of the note in HTML format",
+            "mappingType": "sourceAttribute",
+            "sourcefield": "body",
+            "targetfield": "body",
+            "attributeType": "text",
+            "isSourceFieldAvailable": true,
+            "showFieldOnInitialScreen": true
+          },
+          {
+            "skip": false,
+            "type": "boolean",
+            "value": "",
+            "default": "",
+            "override": [],
+            "required": false,
+            "attribute": "private",
+            "description": "Is Private/Public Note",
+            "mappingType": "sourceAttribute",
+            "sourcefield": "public",
+            "targetfield": "private",
+            "attributeType": "boolean",
+            "isSourceFieldAvailable": true,
+            "showFieldOnInitialScreen": true
+          }
+        ],
+        "targetExecutor": {
+          "headers": [
+            {
+              "key": "domainUrl",
+              "req": true,
+              "value": "saasgenie",
+              "description": ""
+            },
+            {
+              "key": "apikey",
+              "req": true,
+              "value": "eFd5Yo25bCCUxxQW826",
+              "description": ""
+            }
+          ],
+          "version": "v1",
+          "methodName": "create_freshservice_change_notes",
+          "queryParams": [
+            {
+              "key": "change_id",
+              "req": true,
+              "value": "{{changes.change.id}}",
+              "description": ""
+            },
+            {
+              "key": "migrate_as",
+              "req": true,
+              "value": "notes",
+              "description": ""
+            }
+          ],
+          "methodParams": [
+            "body",
+            "queryParams"
+          ]
+        },
+        "dependentTargets": [],
+        "uniqueIdentifier": "{{notes.note.id}}",
+        "targetResponseType": "object"
+      }
+    ],
+    "uniqueIdentifier": "{{changes.change.id}}",
+    "targetResponseType": "object"
+  },
+  "executedBy": "rajesh@saasgenie.ai",
+  "templateId": "139",
+  "environment": "production",
+  "totalRecords": 50,
+  "migrationType": "test",
+  "scheduledTime": 1732406400000,
+  "sourceModuleName": "solarwinds",
+  "targetModuleName": "freshservice",
+  "parallelExecution": false
+}

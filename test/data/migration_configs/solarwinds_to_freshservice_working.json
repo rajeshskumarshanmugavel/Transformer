@@ -1,0 +1,874 @@
+{
+  "name": "solarwinds to freshservice",
+  "common": {
+    "source": {
+      "headers": [
+        {
+          "key": "domainUrl",
+          "req": false,
+          "value": "saasgenieai.samanage.com",
+          "description": "Solarwinds Service Desk domain"
+        },
+        {
+          "key": "api_token",
+          "req": true,
+          "value": "eW9nYXByaXlhLmthbm5hbkBzYWFzZ2VuaWUuYWk=:eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX2lkIjoxMjgyODE4NywiZ2VuZXJhdGVkX2F0IjoiMjAyNS0xMS0yMyAxNjo1MjowMCJ9.gkQAfDJcyaR4jZjVVjq7-tK7BHTIzJ-kO76ndO_-7FHAXpP0Bw53-_A3cae6H5Vv_XpfAJuCyierzmviartRUw:VVM=",
+          "description": "JWT API token for Solarwinds authentication"
+        }
+      ],
+      "authType": "Bearer"
+    },
+    "target": {
+      "headers": [
+        {
+          "key": "apikey",
+          "req": false,
+          "value": "eFd5Yo25bCCUxxQW826",
+          "description": ""
+        },
+        {
+          "key": "domainUrl",
+          "req": false,
+          "value": "saasgenie",
+          "description": ""
+        },
+        {
+          "key": "instance_url",
+          "req": false,
+          "value": "https://saasgenie.freshservice.com",
+          "description": ""
+        }
+      ],
+      "authType": "Basic"
+    }
+  },
+  "source": {
+    "name": "incidents",
+    "sourceExecutor": {
+      "headers": [
+        {
+          "key": "domainUrl",
+          "req": false,
+          "value": "saasgenieai.samanage.com",
+          "description": "Solarwinds Service Desk domain"
+        },
+        {
+          "key": "api_token",
+          "req": true,
+          "value": "eW9nYXByaXlhLmthbm5hbkBzYWFzZ2VuaWUuYWk=:eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX2lkIjoxMjgyODE4NywiZ2VuZXJhdGVkX2F0IjoiMjAyNS0xMS0wMyAxMToyNDoyNCJ9.rKVIY1PhXZW99XKYpycNdf-2MC4SYZaK79-l4KjukxaKbTA6A-VrfMfPGxfdJlbuQjNnw9nn2wkhhBZBqXthHQ:VVM=",
+          "description": "JWT API token for Solarwinds authentication"
+        }
+      ],
+      "version": "v1",
+      "authType": "Bearer",
+      "methodName": "get_solarwinds_incidents_v1",
+      "queryParams": [
+        {
+          "key": "limit",
+          "req": false,
+          "value": "1",
+          "description": ""
+        },
+        {
+          "key": "offset",
+          "req": false,
+          "value": "0",
+          "description": ""
+        },
+        {
+          "key": "filters",
+          "req": false,
+          "value": "",
+          "description": ""
+        }
+      ],
+      "methodParams": [
+        "headers",
+        "queryParams",
+        "numberOfProcessedRecords"
+      ]
+    },
+    "dependentSources": [
+      {
+        "name": "tasks",
+        "sourceExecutor": {
+          "headers": [
+            {
+              "key": "domainUrl",
+              "req": false,
+              "value": "saasgenieai.samanage.com",
+              "description": "Solarwinds Service Desk domain"
+            },
+            {
+              "key": "api_token",
+              "req": true,
+              "value": "c3VkaGEucmFqZXNoQHNhYXNnZW5pZS5haQ==:eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX2lkIjoxMjY2NzU3NywiZ2VuZXJhdGVkX2F0IjoiMjAyNS0wOS0xNiAxNTozNzo0MCJ9.lJqTZSnNZ40ernWMSq429EoIR4zBkVWPlEdGaPdX-QUgFCHnwN408hvcDVUsywBVoltVLInkcctSUKU25YfQfw:VVM=",
+              "description": "JWT API token for Solarwinds authentication"
+            }
+          ],
+          "version": "v1",
+          "authType": "Bearer",
+          "methodName": "get_solarwinds_tasks_v1",
+          "queryParams": [
+            {
+              "key": "incident_id",
+              "req": false,
+              "value": "{{incidents.id}}",
+              "description": ""
+            }
+          ],
+          "methodParams": [
+            "headers",
+            "queryParams"
+          ]
+        },
+        "dependentSources": [],
+        "uniqueIdentifier": "{{tasks.id}}"
+      },
+      {
+        "name": "notes",
+        "sourceExecutor": {
+          "headers": [
+            {
+              "key": "domainUrl",
+              "req": false,
+              "value": "saasgenieai.samanage.com",
+              "description": "Solarwinds Service Desk domain"
+            },
+            {
+              "key": "api_token",
+              "req": true,
+              "value": "c3VkaGEucmFqZXNoQHNhYXNnZW5pZS5haQ==:eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX2lkIjoxMjY2NzU3NywiZ2VuZXJhdGVkX2F0IjoiMjAyNS0wOS0xNiAxNTozNzo0MCJ9.lJqTZSnNZ40ernWMSq429EoIR4zBkVWPlEdGaPdX-QUgFCHnwN408hvcDVUsywBVoltVLInkcctSUKU25YfQfw:VVM=",
+              "description": "JWT API token for Solarwinds authentication"
+            }
+          ],
+          "version": "v1",
+          "authType": "Bearer",
+          "methodName": "get_solarwinds_notes_v1",
+          "queryParams": [
+            {
+              "key": "incident_id",
+              "req": false,
+              "value": "{{incidents.id}}",
+              "description": ""
+            }
+          ],
+          "methodParams": [
+            "headers",
+            "queryParams"
+          ]
+        },
+        "dependentSources": [],
+        "uniqueIdentifier": "{{notes.id}}"
+      }
+    ],
+    "uniqueIdentifier": "{{incidents.id}}",
+    "sourceResponseType": "array[object]"
+  },
+  "target": {
+    "name": "tickets",
+    "isMainTarget": true,
+    "fieldMappings": [
+      {
+        "skip": false,
+        "type": "string",
+        "value": "",
+        "default": "Migrated from SolarWinds",
+        "override": [],
+        "required": true,
+        "attribute": "subject",
+        "description": "Subject of the ticket.",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "name",
+        "targetfield": "subject",
+        "attributeType": "text",
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "string",
+        "value": "",
+        "default": "No description provided.",
+        "override": [],
+        "required": true,
+        "attribute": "description",
+        "description": "HTML content of the ticket.",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "description",
+        "targetfield": "description",
+        "attributeType": "text",
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "datetime",
+        "value": "",
+        "default": "",
+        "override": [],
+        "required": false,
+        "attribute": "due_by",
+        "description": "Due date for the ticket",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "due_at",
+        "targetfield": "due_by",
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "datetime",
+        "value": "",
+        "default": "",
+        "override": [],
+        "required": false,
+        "attribute": "fr_due_by",
+        "description": "First response due date for the ticket (required when due_by is provided)",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "due_at",
+        "targetfield": "fr_due_by",
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "number",
+        "value": 2,
+        "default": 2,
+        "override": [
+          {
+            "sourcevalue": "New",
+            "targetvalue": 2
+          },
+          {
+            "sourcevalue": "Active",
+            "targetvalue": 2
+          },
+          {
+            "sourcevalue": "In Progress",
+            "targetvalue": 3
+          },
+          {
+            "sourcevalue": "Assigned",
+            "targetvalue": 3
+          },
+          {
+            "sourcevalue": "Pending",
+            "targetvalue": 4
+          },
+          {
+            "sourcevalue": "Resolved",
+            "targetvalue": 4
+          },
+          {
+            "sourcevalue": "Closed",
+            "targetvalue": 5
+          },
+          {
+            "sourcevalue": "Pending Assignment",
+            "targetvalue": 2
+          }
+        ],
+        "required": true,
+        "attribute": "status",
+        "description": "Status of the ticket.",
+        "mappingType": "valueMapped",
+        "sourcefield": "state",
+        "targetfield": "status",
+        "attributeType": "number",
+        "mappingEnabled": true,
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "number",
+        "value": 1,
+        "default": 1,
+        "override": [
+          {
+            "sourcevalue": "Low",
+            "targetvalue": 1
+          },
+          {
+            "sourcevalue": "Medium",
+            "targetvalue": 2
+          },
+          {
+            "sourcevalue": "High",
+            "targetvalue": 3
+          },
+          {
+            "sourcevalue": "Urgent",
+            "targetvalue": 4
+          }
+        ],
+        "required": false,
+        "attribute": "priority",
+        "description": "Priority of the ticket.",
+        "mappingType": "valueMapped",
+        "sourcefield": "priority",
+        "targetfield": "priority",
+        "attributeType": "number",
+        "mappingEnabled": true,
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "number",
+        "value": 24002588133,
+        "default": 24002588133,
+        "override": [
+          {
+            "sourcevalue": "sudha.rajesh@saasgenie.ai",
+            "targetvalue": 24002588133
+          },
+          {
+            "sourcevalue": "admin@samanage.com",
+            "targetvalue": 24002588133
+          },
+          {
+            "sourcevalue": "test@saasgenie.ai",
+            "targetvalue": 24002588133
+          }
+        ],
+        "required": false,
+        "attribute": "responder_id",
+        "description": "ID of the agent to whom the ticket has been assigned.",
+        "mappingType": "valueMapped",
+        "sourcefield": "assignee.email",
+        "targetfield": "responder_id",
+        "attributeType": "number",
+        "mappingEnabled": true,
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "string",
+        "value": "",
+        "default": "",
+        "override": [],
+        "required": false,
+        "attribute": "email",
+        "description": "Email address of the requester.",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "requester.email",
+        "targetfield": "email",
+        "attributeType": "text",
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "string",
+        "value": "",
+        "default": "",
+        "override": [],
+        "required": false,
+        "attribute": "name",
+        "description": "Name of the requester.",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "requester.name",
+        "targetfield": "name",
+        "attributeType": "text",
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "string",
+        "value": "",
+        "default": "",
+        "override": [],
+        "required": false,
+        "attribute": "phone",
+        "description": "Phone number of the requester.",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "phone",
+        "targetfield": "phone",
+        "attributeType": "text",
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "sourcefield": "number",
+        "targetfield": "source_ticket_id",
+        "override": [],
+        "attribute": "source_ticket_id",
+        "type": "string",
+        "description": "Original Solarwinds incident number",
+        "required": false,
+        "default": "",
+        "isSourceFieldAvailable": true,
+        "mappingEnabled": false,
+        "skip": true,
+        "showFieldOnInitialScreen": true,
+        "isCustomField": true,
+        "customFieldKey": "custom_fields",
+        "nestedLevel": 1,
+        "isNested": false,
+        "value": "",
+        "mappingType": "sourceAttribute",
+        "attributeType": "text"
+      },
+      {
+        "skip": true,
+        "type": "datetime",
+        "value": "",
+        "default": "",
+        "override": [],
+        "required": false,
+        "attribute": "created_at",
+        "description": "Ticket creation timestamp.",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "created_at",
+        "targetfield": "created_at",
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "string",
+        "value": "Incident",
+        "default": "Incident",
+        "override": [],
+        "required": false,
+        "attribute": "type",
+        "description": "Helps categorize the ticket according to the different kinds of issues your support team deals with",
+        "mappingType": "static",
+        "sourcefield": "",
+        "targetfield": "type",
+        "attributeType": "text",
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "array",
+        "value": [
+          "swsd-to-fs"
+        ],
+        "default": [
+          "swsd-to-fs"
+        ],
+        "override": [],
+        "required": false,
+        "attribute": "tags",
+        "description": "Tags that have been associated with the ticket.",
+        "mappingType": "static",
+        "sourcefield": "",
+        "targetfield": "tags",
+        "attributeType": "text",
+        "includeValuesFrom": "tag",
+        "isSourceFieldAvailable": false,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "number",
+        "value": 0,
+        "default": "",
+        "override": [
+          {
+            "sourcevalue": "IT Support",
+            "targetvalue": 24000267577
+          },
+          {
+            "sourcevalue": "Network",
+            "targetvalue": 24000267577
+          },
+          {
+            "sourcevalue": "Help Desk",
+            "targetvalue": 24000267577
+          },
+          {
+            "sourcevalue": "Infrastructure",
+            "targetvalue": 24000267577
+          },
+          {
+            "sourcevalue": "IT Team",
+            "targetvalue": 24000267577
+          },
+          {
+            "sourcevalue": null,
+            "targetvalue": 24000267577
+          },
+          {
+            "sourcevalue": "",
+            "targetvalue": 24000267577
+          }
+        ],
+        "required": false,
+        "attribute": "group_id",
+        "description": "ID of the group to which the ticket has been assigned.",
+        "mappingType": "valueMapped",
+        "sourcefield": "group_assignee.name",
+        "targetfield": "group_id",
+        "attributeType": "number",
+        "mappingEnabled": false,
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "array",
+        "value": [
+          "solarwinds-migration"
+        ],
+        "default": [
+          "solarwinds-migration"
+        ],
+        "override": [],
+        "required": false,
+        "attribute": "tags",
+        "description": "Tags that have been associated with the ticket.",
+        "mappingType": "static",
+        "sourcefield": "",
+        "targetfield": "tags",
+        "attributeType": "text",
+        "includeValuesFrom": "tag",
+        "isSourceFieldAvailable": false,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "number",
+        "value": 24000267577,
+        "default": 24000267577,
+        "override": [
+          {
+            "sourcevalue": "Helpdesk Team",
+            "targetvalue": 24000267577
+          },
+          {
+            "sourcevalue": "Network Team",
+            "targetvalue": 24000267577
+          },
+          {
+            "sourcevalue": "IT Support",
+            "targetvalue": 24000267577
+          },
+          {
+            "sourcevalue": "Service Desk",
+            "targetvalue": 24000267577
+          },
+          {
+            "sourcevalue": "IT Team",
+            "targetvalue": 24000267577
+          },
+          {
+            "sourcevalue": null,
+            "targetvalue": 24000267577
+          },
+          {
+            "sourcevalue": "",
+            "targetvalue": 24000267577
+          }
+        ],
+        "required": false,
+        "attribute": "group_id",
+        "description": "ID of the group to which the ticket has been assigned.",
+        "mappingType": "valueMapped",
+        "sourcefield": "group_assignee.name",
+        "targetfield": "group_id",
+        "attributeType": "number",
+        "mappingEnabled": true,
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "string",
+        "value": "",
+        "default": "Hardware",
+        "override": [
+          {
+            "sourcevalue": "Hardware",
+            "targetvalue": "Hardware"
+          },
+          {
+            "sourcevalue": "Applications",
+            "targetvalue": "Applications"
+          },
+          {
+            "sourcevalue": "Compliance",
+            "targetvalue": "Compliance"
+          },
+          {
+            "sourcevalue": "Cosmos",
+            "targetvalue": "Cosmos"
+          },
+          {
+            "sourcevalue": "Human Resources",
+            "targetvalue": "Hardware"
+          },
+          {
+            "sourcevalue": "Account Management",
+            "targetvalue": "Hardware"
+          },
+          {
+            "sourcevalue": null,
+            "targetvalue": "Hardware"
+          },
+          {
+            "sourcevalue": "",
+            "targetvalue": "Hardware"
+          },
+          {
+            "sourcevalue": "*",
+            "targetvalue": "Hardware"
+          }
+        ],
+        "required": false,
+        "attribute": "category",
+        "description": "Category of the ticket from Solarwinds (only valid values: Hardware, Applications, Compliance, Cosmos; all others mapped to Hardware)",
+        "mappingType": "valueMapped",
+        "sourcefield": "category.name",
+        "targetfield": "category",
+        "attributeType": "text",
+        "mappingEnabled": true,
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "datetime",
+        "value": "",
+        "default": "",
+        "override": [],
+        "required": false,
+        "attribute": "fr_due_by",
+        "description": "First response due date for the ticket (required when due_by is provided)",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "due_at",
+        "targetfield": "fr_due_by",
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      },
+      {
+        "skip": false,
+        "type": "array",
+        "value": "",
+        "default": "",
+        "override": [],
+        "required": false,
+        "attribute": "attachments",
+        "description": "Attachments. The total size of all the ticket's attachments cannot exceed 40 MB.",
+        "mappingType": "sourceAttribute",
+        "sourcefield": "attachments",
+        "targetfield": "attachments",
+        "attributeType": "array",
+        "isSourceFieldAvailable": true,
+        "showFieldOnInitialScreen": true
+      }
+    ],
+    "targetExecutor": {
+      "headers": [
+        {
+          "key": "domainUrl",
+          "req": false,
+          "value": "saasgenie",
+          "description": ""
+        },
+        {
+          "key": "apikey",
+          "req": false,
+          "value": "eFd5Yo25bCCUxxQW826",
+          "description": ""
+        }
+      ],
+      "version": "v1",
+      "authType": "Basic",
+      "methodName": "create_freshservice_ticket",
+      "queryParams": [],
+      "methodParams": [
+        "body"
+      ]
+    },
+    "dependentTargets": [
+      {
+        "name": "tasks",
+        "fieldMappings": [
+          {
+            "skip": false,
+            "type": "string",
+            "value": "",
+            "default": "No title provided.",
+            "override": [],
+            "required": true,
+            "attribute": "title",
+            "description": "Task title",
+            "mappingType": "sourceAttribute",
+            "sourcefield": "name",
+            "targetfield": "title",
+            "attributeType": "text",
+            "isSourceFieldAvailable": true,
+            "showFieldOnInitialScreen": true
+          },
+          {
+            "skip": false,
+            "type": "string",
+            "value": "",
+            "default": "No description provided.",
+            "override": [],
+            "required": true,
+            "attribute": "description",
+            "description": "Task description",
+            "mappingType": "sourceAttribute",
+            "sourcefield": "description",
+            "targetfield": "description",
+            "attributeType": "text",
+            "isSourceFieldAvailable": true,
+            "showFieldOnInitialScreen": true
+          }
+        ],
+        "targetExecutor": {
+          "headers": [
+            {
+              "key": "domainUrl",
+              "req": true,
+              "value": "saasgenie",
+              "description": ""
+            },
+            {
+              "key": "apikey",
+              "req": true,
+              "value": "eFd5Yo25bCCUxxQW826",
+              "description": ""
+            }
+          ],
+          "version": "v1",
+          "methodName": "create_freshservice_ticket_tasks",
+          "queryParams": [
+            {
+              "key": "ticket_id",
+              "req": true,
+              "value": "{{tickets.ticket.id}}",
+              "description": ""
+            },
+            {
+              "key": "migrate_as",
+              "req": true,
+              "value": "tasks",
+              "description": ""
+            }
+          ],
+          "methodParams": [
+            "body",
+            "queryParams"
+          ]
+        },
+        "dependentTargets": [],
+        "uniqueIdentifier": "{{tasks.task.id}}",
+        "targetResponseType": "object"
+      },
+      {
+        "name": "notes",
+        "fieldMappings": [
+          {
+            "skip": false,
+            "type": "string",
+            "value": "",
+            "default": "No content provided.",
+            "override": [],
+            "required": true,
+            "attribute": "body",
+            "description": "Content of the note in HTML format",
+            "mappingType": "sourceAttribute",
+            "sourcefield": "body",
+            "targetfield": "body",
+            "attributeType": "text",
+            "isSourceFieldAvailable": true,
+            "showFieldOnInitialScreen": true
+          },
+          {
+            "skip": false,
+            "type": "boolean",
+            "value": "",
+            "default": "",
+            "override": [],
+            "required": false,
+            "attribute": "private",
+            "description": "Is Private/Public Note. If skipped, will be created as a Reply in Target",
+            "mappingType": "sourceAttribute",
+            "sourcefield": "is_private",
+            "targetfield": "private",
+            "attributeType": "boolean",
+            "isSourceFieldAvailable": true,
+            "showFieldOnInitialScreen": true
+          },
+          {
+            "skip": false,
+            "type": "array",
+            "value": "",
+            "default": "",
+            "override": [],
+            "required": false,
+            "attribute": "attachments",
+            "description": "Attachments. The total size of all the ticket's attachments (not just this note) cannot exceed 40 MB.",
+            "mappingType": "sourceAttribute",
+            "sourcefield": "attachments",
+            "targetfield": "attachments",
+            "attributeType": "array",
+            "isSourceFieldAvailable": true,
+            "showFieldOnInitialScreen": true
+          }
+        ],
+        "target_id_template": "{{tickets.ticket.id}}",
+        "targetExecutor": {
+          "headers": [
+            {
+              "key": "domainUrl",
+              "req": true,
+              "value": "saasgenie",
+              "description": ""
+            },
+            {
+              "key": "apikey",
+              "req": true,
+              "value": "eFd5Yo25bCCUxxQW826",
+              "description": ""
+            }
+          ],
+          "version": "v1",
+          "methodName": "create_freshservice_conversation",
+          "queryParams": [
+            {
+              "key": "ticket_id",
+              "req": true,
+              "value": "{{tickets.ticket.id}}",
+              "description": ""
+            },
+            {
+              "key": "migrate_as",
+              "req": true,
+              "value": "notes",
+              "description": ""
+            }
+          ],
+          "methodParams": [
+            "body",
+            "queryParams"
+          ]
+        },
+        "dependentTargets": [],
+        "uniqueIdentifier": "{{notes.conversation.id}}",
+        "targetResponseType": "object"
+      }
+    ],
+    "uniqueIdentifier": "{{tickets.ticket.id}}",
+    "targetResponseType": "object"
+  },
+  "executedBy": "rajesh@saasgenie.ai",
+  "templateId": "138",
+  "environment": "production",
+  "totalRecords": 50,
+  "migrationType": "test",
+  "scheduledTime": 1726502400000,
+  "sourceModuleName": "solarwinds",
+  "targetModuleName": "freshservice",
+  "parallelExecution": false
+}

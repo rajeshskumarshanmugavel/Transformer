@@ -1,0 +1,10 @@
+ticketid,Body,Private,AuthorEmail,CreatedTime,UpdatedTime
+1,Initial report: User experiencing intermittent network disconnections when working from home. VPN connection drops every 30 minutes.,False,john.doe@company.com,01/15/2024 09:30:00 AM,01/15/2024 09:30:00 AM
+1,IT Team Response: We have reviewed your network logs and identified the issue. Please try updating your VPN client to the latest version.,True,sarah.johnson@company.com,01/15/2024 02:45:00 PM,01/15/2024 02:45:00 PM
+2,Password reset request for jane.smith@company.com. User reports being locked out after multiple failed login attempts.,False,jane.smith@company.com,01/15/2024 10:15:00 AM,01/15/2024 10:15:00 AM
+2,Password has been reset and sent to user via secure email. Please check your primary email for new credentials.,True,mike.williams@company.com,01/15/2024 03:20:00 PM,01/15/2024 03:20:00 PM
+3,Need assistance installing ProjectFlow software on Windows 11 machine. Installation keeps failing at 75% completion.,False,bob.wilson@company.com,01/15/2024 11:45:00 AM,01/15/2024 11:45:00 AM
+4,Printer showing 'Paper Jam' error but no paper is actually jammed. Error persists after restart.,False,lisa.brown@company.com,01/14/2024 02:30:00 PM,01/14/2024 02:30:00 PM
+4,Issue resolved: Replaced faulty paper sensor. Printer is now functioning normally.,True,mike.williams@company.com,01/15/2024 08:30:00 AM,01/15/2024 08:30:00 AM
+5,Database performance has degraded significantly since last maintenance window. Query times increased from 2 seconds to 30+ seconds.,False,admin@company.com,01/15/2024 08:00:00 AM,01/15/2024 08:00:00 AM
+5,Currently investigating index fragmentation and query execution plans. Will provide update by EOD.,True,alex.rodriguez@company.com,01/15/2024 04:00:00 PM,01/15/2024 04:00:00 PM

@@ -1,0 +1,430 @@
+{
+    "name": "Test_Dummy_Source_Target",
+    "common": {
+        "source": {
+            "headers": [
+                {
+                    "key": "domainUrl",
+                    "value": "source.example.com",
+                    "req": true
+                }
+            ],
+            "authType": "Basic"
+        },
+        "target": {
+            "headers": [
+                {
+                    "key": "apiKey",
+                    "value": "targetApiKey",
+                    "req": true
+                }
+            ],
+            "authType": "Basic"
+        }
+    },
+    "source": {
+        "name": "tickets",
+        "uniqueIdentifier": "{{tickets.id}}",
+        "sourceExecutor": {
+            "methodName": "get_tickets",
+            "methodParams": [
+                "queryParams"
+            ],
+            "queryParams": [
+                {
+                    "key": "page[size]",
+                    "req": false,
+                    "value": "2",
+                    "description": ""
+                },
+                {
+                    "key": "page[after]",
+                    "req": false,
+                    "value": "{{meta.after_cursor}}",
+                    "description": ""
+                }
+            ]
+        },
+        "sourceResponseType": "array[object]",
+        "dependentSources": [
+            {
+                "name": "conversations",
+                "uniqueIdentifier": "{{conversations.id}}",
+                "sourceExecutor": {
+                    "methodName": "get_conversations",
+                    "methodParams": [
+                        "queryParams"
+                    ],
+                    "queryParams": [
+                        {
+                            "key": "ticket_id",
+                            "value": "{{tickets.id}}",
+                            "req": true
+                        }
+                    ]
+                },
+                "dependentSources": [
+                    {
+                        "name": "replies",
+                        "uniqueIdentifier": "{{replies.id}}",
+                        "sourceExecutor": {
+                            "methodName": "get_replies",
+                            "methodParams": [
+                                "queryParams"
+                            ],
+                            "queryParams": [
+                                {
+                                    "key": "conversation_id",
+                                    "value": "{{conversations.id}}",
+                                    "req": true
+                                }
+                            ]
+                        },
+                        "dependentSources": []
+                    }
+                ]
+            }
+        ]
+    },
+    "target": {
+        "name": "tickets",
+        "uniqueIdentifier": "{{tickets.ticket.ticket_id}}",
+        "isMainTarget": true,
+        "fieldMappings": [
+            {
+                "sourcefield": "subject",
+                "targetfield": "subject",
+                "type": "string",
+                "mappingType": "sourceAttribute",
+                "required": true,
+                "skip": false,
+                "attributeType": "text"
+            },
+            {
+                "sourcefield": "priority",
+                "targetfield": "priority",
+                "type": "number",
+                "mappingType": "valueMapped",
+                "override": [
+                    {
+                        "sourcevalue": "low",
+                        "targetvalue": 1
+                    },
+                    {
+                        "sourcevalue": "medium",
+                        "targetvalue": 2
+                    },
+                    {
+                        "sourcevalue": "high",
+                        "targetvalue": 3
+                    }
+                ],
+                "default": 2,
+                "required": false,
+                "skip": false,
+                "attributeType": "number"
+            },
+            {
+                "sourcefield": "source_float_field",
+                "targetfield": "target_float_field",
+                "type": "number",
+                "mappingType": "sourceAttribute",
+                "default": 0.123,
+                "required": false,
+                "skip": false,
+                "attributeType": "number"
+            },
+            {
+                "sourcefield": "",
+                "targetfield": "tags",
+                "type": "array",
+                "mappingType": "static",
+                "value": [
+                    "Test",
+                    "Automation"
+                ],
+                "default": [
+                    "Test"
+                ],
+                "required": false,
+                "skip": false,
+                "attributeType": "array"
+            },
+            {
+                "sourcefield": "internal_id",
+                "targetfield": "cf_internal_id",
+                "type": "string",
+                "mappingType": "sourceAttribute",
+                "isCustomField": true,
+                "customFieldKey": "custom_fields",
+                "default": "",
+                "required": false,
+                "skip": false,
+                "attributeType": "string"
+            },
+            {
+                "sourcefield": "source_cf_static_field",
+                "targetfield": "target_cf_static_field",
+                "isCustomField": true,
+                "customFieldKey": "custom_fields",
+                "type": "string",
+                "mappingType": "static",
+                "default": "a good cf static field default",
+                "required": true,
+                "skip": false,
+                "attributeType": "string"
+            },
+            {
+                "sourcefield": "source_dict_override",
+                "targetfield": "target_dict_override",
+                "type": "object",
+                "mappingType": "valueMapped",
+                "override": [
+                    {
+                        "sourcevalue": {
+                            "fruit": "apple",
+                            "vegetable": "carrot"
+                        },
+                        "targetvalue": {
+                            "fruit": "apfel",
+                            "vegetable": "karotte"
+                        }
+                    },
+                    {
+                        "sourcevalue": {
+                            "fruit": "banana",
+                            "vegetable": "broccoli"
+                        },
+                        "targetvalue": {
+                            "fruit": "banane",
+                            "vegetable": "brokkoli"
+                        }
+                    }
+                ],
+                "default": "",
+                "required": true,
+                "skip": false,
+                "attributeType": "object"
+            },
+            {
+                "sourcefield": "combined_cf_source",
+                "targetfield": "combined_cf_target",
+                "type": "string",
+                "mappingType": "combined",
+                "isCustomField": true,
+                "customFieldKey": "custom_fields",
+                "combinedFields": [
+                    "first_name",
+                    "last_name",
+                    "city"
+                ],
+                "required": true,
+                "skip": false,
+                "attributeType": "string"
+            },
+            {
+                "sourcefield": "source_list_override",
+                "targetfield": "target_list_override",
+                "type": "array",
+                "mappingType": "valueMapped",
+                "override": [
+                    {
+                        "sourcevalue": [
+                            "apple",
+                            "carrot"
+                        ],
+                        "targetvalue": [
+                            "apfel",
+                            "karotte"
+                        ]
+                    },
+                    {
+                        "sourcevalue": [
+                            "banana",
+                            "broccoli"
+                        ],
+                        "targetvalue": [
+                            "banane",
+                            "brokkoli"
+                        ]
+                    }
+                ],
+                "default": "",
+                "required": true,
+                "skip": false,
+                "attributeType": "array"
+            },
+            {
+                "sourcefield": "ignore_this_field",
+                "targetfield": "ignored_in_target",
+                "type": "string",
+                "mappingType": "sourceAttribute",
+                "required": false,
+                "skip": true
+            },
+            {
+                "sourcefield": "category",
+                "targetfield": "category_code",
+                "type": "number",
+                "mappingType": "valueMapped",
+                "override": [
+                    {
+                        "sourcevalue": "incident",
+                        "targetvalue": 100
+                    },
+                    {
+                        "sourcevalue": "problem",
+                        "targetvalue": 200
+                    }
+                ],
+                "default": 999,
+                "required": false,
+                "skip": false
+            },
+            {
+                "sourcefield": "optional_field",
+                "targetfield": "optional_target",
+                "type": "string",
+                "mappingType": "sourceAttribute",
+                "required": false,
+                "skip": false
+            },
+            {
+                "sourcefield": "",
+                "targetfield": "static_no_default",
+                "type": "string",
+                "mappingType": "static",
+                "required": false,
+                "skip": false
+            }
+        ],
+        "targetExecutor": {
+            "methodName": "create_ticket",
+            "methodParams": [
+                "body"
+            ],
+            "headers": [
+                {
+                    "key": "domain",
+                    "value": "target.example.com"
+                },
+                {
+                    "key": "apiKey",
+                    "value": "targetApiKey"
+                }
+            ]
+        },
+        "dependentTargets": [
+            {
+                "name": "conversations",
+                "uniqueIdentifier": "{{conversations.id}}",
+                "fieldMappings": [
+                    {
+                        "sourcefield": "body",
+                        "targetfield": "body",
+                        "type": "string",
+                        "mappingType": "sourceAttribute",
+                        "required": true,
+                        "skip": false
+                    }
+                ],
+                "targetExecutor": {
+                    "methodName": "create_conversation",
+                    "methodParams": [
+                        "body",
+                        "queryParams"
+                    ],
+                    "queryParams": [
+                        {
+                            "key": "ticket_id",
+                            "value": "{{tickets.ticket.ticket_id}}",
+                            "req": true
+                        }
+                    ],
+                    "headers": [
+                        {
+                            "key": "domain",
+                            "value": "target.example.com"
+                        },
+                        {
+                            "key": "apiKey",
+                            "value": "targetApiKey"
+                        }
+                    ]
+                },
+                "dependentTargets": [
+                    {
+                        "name": "replies",
+                        "uniqueIdentifier": "{{replies.id}}",
+                        "fieldMappings": [
+                            {
+                                "sourcefield": "message",
+                                "targetfield": "text",
+                                "type": "string",
+                                "mappingType": "sourceAttribute",
+                                "required": true,
+                                "skip": false
+                            },
+                            {
+                                "sourcefield": "public",
+                                "targetfield": "private",
+                                "type": "boolean",
+                                "mappingType": "valueMapped",
+                                "override": [
+                                    {
+                                        "sourcevalue": false,
+                                        "targetvalue": true
+                                    },
+                                    {
+                                        "sourcevalue": true,
+                                        "targetvalue": false
+                                    }
+                                ],
+                                "default": false,
+                                "required": false,
+                                "skip": false
+                            }
+                        ],
+                        "targetExecutor": {
+                            "methodName": "create_reply",
+                            "methodParams": [
+                                "body",
+                                "queryParams"
+                            ],
+                            "queryParams": [
+                                {
+                                    "key": "conversation_id",
+                                    "value": "{{conversations.id}}",
+                                    "req": true
+                                }
+                            ],
+                            "headers": [
+                                {
+                                    "key": "domain",
+                                    "value": "target.example.com"
+                                },
+                                {
+                                    "key": "apiKey",
+                                    "value": "targetApiKey"
+                                }
+                            ]
+                        },
+                        "dependentTargets": [],
+                        "targetResponseType": "object"
+                    }
+                ],
+                "targetResponseType": "object"
+            }
+        ],
+        "targetResponseType": "object"
+    },
+    "executedBy": "testuser@example.com",
+    "templateId": "template-45678",
+    "environment": "test",
+    "totalRecords": 10,
+    "migrationType": "test",
+    "scheduledTime": 1234567890,
+    "sourceModuleName": "dummy_source",
+    "targetModuleName": "dummy_target",
+    "parallelExecution": false
+}
