@@ -223,6 +223,15 @@ class Transformer:
     def __build_request_body(self, source_data, field_mappings):
         request_body = {}
         default_values = {}
+        
+        # Preserve attachments and planning_fields if present (not in fieldMappings but needed for upload)
+        if 'attachments' in source_data:
+            request_body['attachments'] = source_data['attachments']
+            logging.info(f"[TRANSFORM] Preserved {len(source_data['attachments'])} attachments from source data")
+        
+        if 'planning_fields' in source_data:
+            request_body['planning_fields'] = source_data['planning_fields']
+            logging.info(f"[TRANSFORM] Preserved planning_fields from source data")
 
         def get_source_value(source_data, source_key, mapping):
             if mapping.get('isCustomField'):
@@ -323,9 +332,10 @@ class Transformer:
                             field_value = source_data.get(mapping['customFieldKey'], {}).get(field_name)
                         if field_value is None:
                             field_value = source_data.get(field_name)
-                        combined_values.append(str(field_value) if field_value is not None else "")
+                        if field_value is not None and str(field_value).strip() != "":
+                            combined_values.append(f"{field_name}: {field_value}")
 
-                    value = ", ".join([v for v in combined_values if v != ""])  # Remove empty strings
+                    value = ", ".join(combined_values)  # Join labeled field:value pairs
 
                 else:
                     if mapping_type == 'static':
@@ -346,15 +356,6 @@ class Transformer:
 
                 value = type_cast(value, mapping.get('type'))
                 request_body[target_key] = value
-        
-        # Convert planning_fields to nested format for Freshservice API
-        if 'planning_fields' in request_body and isinstance(request_body['planning_fields'], dict):
-            nested_planning_fields = {}
-            for field_name, field_value in request_body['planning_fields'].items():
-                if field_value:
-                    nested_planning_fields[field_name] = {"description": str(field_value)}
-            request_body['planning_fields'] = nested_planning_fields
-        
         return request_body, default_values
 
 
@@ -669,20 +670,21 @@ class Transformer:
             self.__get_current_migration_status(),
             None
         )
-        if migrated_record.get('status', '') == record_statuses['SUCCESS']:
-            # Dom - Extract ticket info for logging
-            source_id = source_data.get('id', 'unknown')
-            source_subject = source_data.get('subject', 'unknown')
-            
-            self.logger.info(
-                f'[SKIP] Resource belonging to `{source_config["name"]}` already processed successfully - ID: {source_id}, Subject: {source_subject}',
-                extra={'migration_id': self.migration_id}
-            )               
-            
-            record_specific_context_params['current_target_context'][target_config['name']] = self.__buildTargetContext(
-                migrated_record, target_config['uniqueIdentifier']
-            )
-            return record_specific_context_params['current_target_context'][target_config['name']], record_specific_context_params
+        # TEMPORARILY COMMENTED FOR TESTING - Re-process changes with attachments
+        # if migrated_record.get('status', '') == record_statuses['SUCCESS']:
+        #     # Dom - Extract ticket info for logging
+        #     source_id = source_data.get('id', 'unknown')
+        #     source_subject = source_data.get('subject', 'unknown')
+        #     
+        #     self.logger.info(
+        #         f'[SKIP] Resource belonging to `{source_config["name"]}` already processed successfully - ID: {source_id}, Subject: {source_subject}',
+        #         extra={'migration_id': self.migration_id}
+        #     )               
+        #     
+        #     record_specific_context_params['current_target_context'][target_config['name']] = self.__buildTargetContext(
+        #         migrated_record, target_config['uniqueIdentifier']
+        #     )
+        #     return record_specific_context_params['current_target_context'][target_config['name']], record_specific_context_params
 
         result, record_specific_context_params = self.__process_target_chain(
             is_root_level,
@@ -806,11 +808,16 @@ class Transformer:
 
         method_name, query_params, headers, auth_type, method_params = self.__get_executor_props(source_executor_config, records_specific_context_params['current_source_context'])
 
+        # Get target config to access field mappings (needed for source connectors like SolarWinds)
+        target_config = self.configs['target'] if is_root_level else self.__get_target_config(source_config['name'])
+        field_mappings = target_config.get('fieldMappings', []) if target_config else []
+
         available_args = {
             'queryParams': query_params,
             'headers': headers,
             'authType': auth_type,
-            'numberOfProcessedRecords': self.current_count_of_processed_records
+            'numberOfProcessedRecords': self.current_count_of_processed_records,
+            'fieldMappings': field_mappings
         }
 
         args_to_pick = self.__pick_method_args(self.source_name, method_name, method_params, available_args, source_config)
@@ -847,8 +854,6 @@ class Transformer:
         )
 
         source_data_list = result['body'][source_config['name']]
-
-        target_config = self.configs['target'] if is_root_level else self.__get_target_config(source_config['name'])
 
         if is_root_level:
             remaining_records = self.total_no_records - self.current_count_of_processed_records

@@ -429,10 +429,13 @@ class UniversalFreshserviceConnector(BaseTargetConnector):
                     f"Description truncated from {len(description_bytes)} to {len(ticket_data['description'].encode('utf-8'))} bytes"
                 )
 
+
         if files:
             form_files = [('attachments[]', (f['name'], f['content'], f['content_type'])) for f in files]
             
             form_data = []
+
+            
             for key, value in ticket_data.items():
                 if key == 'custom_fields' and isinstance(value, dict):
                     # Handle custom_fields as individual form fields
@@ -471,6 +474,7 @@ class UniversalFreshserviceConnector(BaseTargetConnector):
                         if cf_value is None or cf_value == '':
                             del value[cf_key]
                             logging.info(f"Removed custom field: custom_fields[{cf_key}] (was None or empty)")
+
             return self.rate_limiter.make_request_with_retry(
                 url, 'POST', auth=auth, headers=headersData, json_data=ticket_data
             )
@@ -619,11 +623,17 @@ class UniversalFreshserviceConnector(BaseTargetConnector):
             # Make a copy to avoid modifying original
             ticket_copy = ticket_data.copy()
 
-            # Remove keys with "", 0, None, or []
+            # Remove keys with "", None, or []
+            # Special handling: Remove responder_id, group_id, department_id when they are 0 or None
+            fields_to_remove_if_zero_or_none = ['responder_id', 'group_id', 'department_id']
+
             for k in list(ticket_copy.keys()):
                 v = ticket_copy[k]
-                if v == "" or v == 0 or v is None or (isinstance(v, list) and len(v) == 0):
+                if v == "" or (isinstance(v, list) and len(v) == 0):
                     del ticket_copy[k]
+                elif (v is None or v == 0) and k in fields_to_remove_if_zero_or_none:
+                    del ticket_copy[k]
+                    logging.info(f"Removed {k} with value {v}")
 
             # --- Begin: Dynamic key renaming logic ---
             key_map = {
@@ -684,7 +694,7 @@ class UniversalFreshserviceConnector(BaseTargetConnector):
             all_files = regular_files + inline_attachments
             
             logging.info(f"Creating ticket with {len(all_files)} attachments, {len(failed_files)} failed")
-            
+
             # Create ticket
             response = self._create_ticket_api_call(ticket_copy, all_files, target_headers)
             
@@ -1003,13 +1013,6 @@ async def get_universal_attachment_service() -> Optional[UniversalAttachmentServ
         logging.error(f"Failed to initialize UniversalAttachmentService: {e}")
         return None
 
-def cleanup_attachment_service():
-    """Cleanup function - no longer needed since we don't cache globally"""
-    logging.info("No global attachment service to clean up")
-    pass
-
-# Register cleanup function
-atexit.register(cleanup_attachment_service)
 
 def to_iso8601_z(dt):
     """Convert any datetime to ISO 8601 format with 'Z' suffix (UTC)."""
@@ -1105,19 +1108,6 @@ def create_freshservice_changes(body: Dict, **kwargs) -> Dict:
 
         change_data['status'] = 1  # Default to 'Open' status
         
-        # Resolve requester email to ID
-        # email = change_data.get('requester_email') or change_data.get('email') or change_data.get('requester_id')
-        # if email:
-        #     # Create helper instance to resolve email
-        #     helper = FreshworksHelper(domain, api_key, email, "freshservice")
-        #     requester_id = helper.get_requester_id_by_email(email)
-        #     if requester_id:
-        #         change_data['requester_id'] = requester_id
-        #         logging.info(f"Resolved requester email {email} to ID {requester_id}")
-        #     else:
-        #         logging.warning(f"Could not resolve requester ID for email: {email}")
-        # else:
-        #     logging.warning("No requester email found in change data")
         # Separate attachments if present
         attachments = change_data.pop("attachments", [])
         
@@ -1159,10 +1149,21 @@ def create_freshservice_changes(body: Dict, **kwargs) -> Dict:
             # Process attachments 
             for attachment in attachments:
                 file_name = attachment.get("name") or attachment.get("filename") or attachment.get("file_name")
+                file_content = attachment.get("content")  # Pre-downloaded bytes from source
                 file_url = attachment.get("attachment_url") or attachment.get("url") or attachment.get("download_url")
 
-                if not file_url or not file_name:
-                    logging.warning(f"Skipping attachment with missing info: {attachment}")
+                if not file_name:
+                    logging.warning(f"Skipping attachment with missing filename: {attachment}")
+                    continue
+
+                # If content is already downloaded as bytes, use it directly (avoids URL expiration)
+                if file_content and isinstance(file_content, bytes):
+                    files.append(('attachments[]', (file_name, file_content, attachment.get('content_type', 'application/octet-stream'))))
+                    continue
+
+                # Otherwise, try to download from URL
+                if not file_url:
+                    logging.warning(f"Skipping attachment {file_name}: no content or URL available")
                     continue
 
                 try:
@@ -2227,8 +2228,10 @@ def get_universal_attachment_statistics() -> Dict:
 
 async def cleanup_universal_attachment_service():
     """Cleanup global attachment service - no longer needed"""
-    logging.info("No global attachment service to clean up")
-    pass
+    try:
+        logging.info("No global attachment service to clean up")
+    except Exception as e:
+        pass
 
 
 # ===================================================================

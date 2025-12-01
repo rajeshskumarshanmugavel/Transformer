@@ -1,4 +1,3 @@
-import logging
 
 def get_solarwinds_tasks_v1(**kwargs) -> dict:
    
@@ -233,10 +232,116 @@ from .base_source_connector import (
 )
 import time
 import concurrent.futures
+import asyncio
+import logging
 from .base_source_connector import BaseSourceRateLimitHandler, convert_query_params_to_dict, standardize_source_response_format
+from .utils.attachment_service import UniversalAttachmentService, ProcessedAttachment
 
 
 class SolarwindsRateLimitHandler(BaseSourceRateLimitHandler):
+    def is_rate_limited(self, response: requests.Response) -> bool:
+        """Return True if SolarWinds API indicates rate limiting (HTTP 429)."""
+        return response.status_code == 429
+
+    def get_retry_delay(self, response: requests.Response) -> int:
+        """Extract retry delay from headers or fallback to a sane default."""
+        retry_after = response.headers.get('Retry-After')
+        if retry_after:
+            try:
+                return int(retry_after)
+            except ValueError:
+                pass
+        return 5
+
+def build_planning_fields_from_change(change: Dict, planning_fields_mapping: Dict[str, str] = None) -> Dict:
+    """Build planning_fields dict from a SolarWinds change record.
+    Returns dict with Freshservice-compatible structure:
+    { section_name: { description: str } }
+    
+    The API automatically converts 'description' to both description_html and description_text.
+    
+    Args:
+        change: SolarWinds change record
+        planning_fields_mapping: Dict mapping Freshservice field names to SolarWinds field names
+                                 Example: {"reason_for_change": "change_plan", "rollout_plan": "test_plan"}
+                                 If None, uses default mapping.
+    
+    Default mapping:
+    - SolarWinds 'change_plan' → Freshservice 'reason_for_change'
+    - SolarWinds 'test_plan' → Freshservice 'rollout_plan'
+    - SolarWinds 'rollback_plan' → Freshservice 'backout_plan'
+    """
+    import logging
+    
+    planning_fields: Dict[str, Dict[str, str]] = {}
+    
+    # Helper to create planning field - API converts 'description' to HTML/text automatically
+    def format_field(text: str) -> Dict[str, str]:
+        if not text or text.strip() == "":
+            return None
+        return {
+            "description": text
+        }
+    
+    # Use provided mapping or default
+    if planning_fields_mapping is None:
+        planning_fields_mapping = {
+            "reason_for_change": "change_plan",
+            "rollout_plan": "test_plan",
+            "backout_plan": "rollback_plan"
+        }
+    
+    logging.info(f"[PLANNING MAPPING] Using mapping: {planning_fields_mapping}")
+    
+    # Apply mapping dynamically
+    for freshservice_field, solarwinds_field in planning_fields_mapping.items():
+        value = change.get(solarwinds_field) or ""
+        if value:
+            formatted = format_field(value)
+            if formatted:
+                planning_fields[freshservice_field] = formatted
+    
+    # Add custom_fields (required by Freshservice API)
+    if planning_fields:
+        planning_fields['custom_fields'] = {}
+    
+    return planning_fields
+
+
+def _extract_planning_fields_mapping(field_mappings: list) -> Dict[str, str]:
+    """Extract planning_fields mapping from fieldMappings config.
+    
+    Args:
+        field_mappings: List of field mapping dictionaries from transformation config
+    
+    Returns:
+        Dict mapping Freshservice field names to SolarWinds field names
+        Example: {"reason_for_change": "change_plan", "rollout_plan": "test_plan"}
+    """
+    import logging
+    
+    # Default mapping (fallback)
+    default_mapping = {
+        "reason_for_change": "change_plan",
+        "rollout_plan": "test_plan",
+        "backout_plan": "rollback_plan"
+    }
+    
+    try:
+        # Search for planning_fields attribute in field mappings
+        for mapping in field_mappings:
+            if mapping.get('attribute') == 'planning_fields':
+                custom_mapping = mapping.get('planning_fields_mapping')
+                if custom_mapping:
+                    logging.info(f"[PLANNING MAPPING] Using custom mapping from config: {custom_mapping}")
+                    return custom_mapping
+        
+        logging.info(f"[PLANNING MAPPING] No custom planning_fields_mapping found, using default: {default_mapping}")
+        return default_mapping
+        
+    except Exception as e:
+        logging.error(f"[PLANNING MAPPING] Error extracting planning_fields mapping: {e}. Using default mapping.")
+        return default_mapping
     
     def is_rate_limited(self, response: requests.Response) -> bool:
         return response.status_code == 429
@@ -476,6 +581,7 @@ class OptimizedSolarwindsDataEnricher:
 
     def enrich_changes_optimized(self, changes: List[Dict], query_params: Dict = None) -> List[Dict]:
         if not changes:
+            logging.warning(f"[ENRICH] No changes to enrich, returning empty list")
             return []
 
         if query_params is None:
@@ -483,9 +589,8 @@ class OptimizedSolarwindsDataEnricher:
 
         enable_attachment_enrichment = query_params.get('enable_attachment_enrichment', 'false').lower() == 'true'
         
-        print(f"[ENRICHER DEBUG] Changes count: {len(changes)}")
-        print(f"[ENRICHER DEBUG] query_params: {query_params}")
-        print(f"[ENRICHER DEBUG] enable_attachment_enrichment: {enable_attachment_enrichment}")
+        logging.info(f"[ENRICH] Starting enrichment for {len(changes)} changes. Attachment enrichment enabled: {enable_attachment_enrichment}")
+        logging.info(f"[ENRICH] Query params: {query_params}")
 
         try:
             enriched_changes = []
@@ -494,19 +599,13 @@ class OptimizedSolarwindsDataEnricher:
                 enriched_changes.append(enriched_change)
 
             if enable_attachment_enrichment:
-                print(f"[ENRICHER DEBUG] Calling _enrich_changes_attachments_batch for {len(enriched_changes)} changes")
-                logging.info(f"[ENRICHER DEBUG] Calling _enrich_changes_attachments_batch for {len(enriched_changes)} changes")
+                logging.info(f"[ENRICH] Calling _enrich_changes_attachments_batch for {len(enriched_changes)} changes")
                 self._enrich_changes_attachments_batch(enriched_changes)
-                logging.info(f"[ENRICHER DEBUG] Completed attachment enrichment for {len(enriched_changes)} changes")
             else:
-                print(f"[ENRICHER DEBUG] Attachment enrichment is DISABLED")
-                logging.info(f"[ENRICHER DEBUG] Attachment enrichment is DISABLED")
+                logging.warning(f"[ENRICH] Attachment enrichment is DISABLED! enable_attachment_enrichment={query_params.get('enable_attachment_enrichment')}")
 
             return enriched_changes
-        except Exception as e:
-            print(f"[ENRICHER ERROR] Exception during enrichment: {e}")
-            import traceback
-            traceback.print_exc()
+        except Exception:
             return changes
 
     def _apply_enhanced_enrichment_to_note(self, note: Dict) -> Dict:
@@ -763,167 +862,6 @@ class OptimizedSolarwindsDataEnricher:
             for incident in incidents:
                 incident['attachments'] = []
                 incident['attachmentUrls'] = []
-    
-    def _enrich_changes_attachments_batch(self, changes: List[Dict]):
-        """
-        🚀 BATCH ATTACHMENT PROCESSING FOR CHANGES
-        Download attachments from /changes/{id} endpoints and prepare for Freshservice
-        """
-        if not changes:
-            return
-        
-        try:
-            # Collect all change IDs
-            change_ids = []
-            for change in changes:
-                change_id = change.get('id')
-                if change_id:
-                    change_ids.append(str(change_id))
-            
-            if not change_ids:
-                # No valid change IDs, set empty attachments for all
-                for change in changes:
-                    change['attachments'] = []
-                    change['attachmentUrls'] = []
-                return
-            
-            # Process in chunks to avoid API limits
-            chunk_size = 50
-            all_attachments = {}  # change_id -> [attachments]
-            
-            print(f"[CHANGE ATTACHMENT] Processing {len(change_ids)} changes in chunks of {chunk_size}")
-            logging.info(f"[CHANGE ATTACHMENT] Processing {len(change_ids)} changes in chunks of {chunk_size}")
-            
-            for i in range(0, len(change_ids), chunk_size):
-                chunk = change_ids[i:i + chunk_size]
-                
-                # Process each change in the chunk
-                for change_id in chunk:
-                    attachments_found = False
-                    processed_attachments = []
-                    
-                    # Try multiple endpoint patterns for changes
-                    endpoint_patterns = [
-                        f"/changes/{change_id}.json?layout=long",  # Primary endpoint with full details
-                        f"/changes/{change_id}/attachments.json",
-                        f"/changes/{change_id}/attachments",
-                        f"/attachments.json?change_id={change_id}",
-                        f"/changes/{change_id}.json?include=attachments"
-                    ]
-                    
-                    for pattern in endpoint_patterns:
-                        if attachments_found:
-                            break
-                            
-                        try:
-                            url = f"{self.connector._build_base_url()}{pattern}"
-                            response = self.connector._make_authenticated_request(url, 'GET')
-                            
-                            if response.status_code == 200:
-                                data = response.json()
-                                
-                                # Handle different response structures
-                                attachments = []
-                                if isinstance(data, list):
-                                    attachments = data
-                                elif isinstance(data, dict):
-                                    # Try different keys where attachments might be
-                                    for key in ['attachments', 'files', 'documents', 'change']:
-                                        if key in data:
-                                            if key == 'change' and isinstance(data[key], dict):
-                                                attachments = data[key].get('attachments', [])
-                                            else:
-                                                attachments = data[key] if isinstance(data[key], list) else []
-                                            break
-                                
-                                if attachments:
-                                    # Process full attachment data with file content download
-                                    for attachment in attachments:
-                                        # Extract basic attachment info
-                                        file_name = attachment.get('name', attachment.get('filename', attachment.get('file_name', '')))
-                                        download_url = attachment.get('url', attachment.get('download_url', ''))
-                                        
-                                        attachment_info = {
-                                            'id': attachment.get('id'),
-                                            'name': file_name,  # CRITICAL: Use 'name' for Freshservice compatibility
-                                            'filename': file_name,
-                                            'file_name': file_name,
-                                            'size': attachment.get('size', attachment.get('file_size', 0)),
-                                            'content_type': attachment.get('content_type', attachment.get('mime_type', '')),
-                                            'download_url': download_url,
-                                            'created_at': attachment.get('created_at', '')
-                                        }
-                                        
-                                        # Download file content for Freshservice
-                                        if download_url:
-                                            try:
-                                                # Download the file content
-                                                content_response = self.connector._make_authenticated_request(download_url, 'GET')
-                                                if content_response.status_code == 200:
-                                                    # Store binary content directly
-                                                    attachment_info['content'] = content_response.content
-                                                    print(f"   [CHANGE DOWNLOAD] Successfully downloaded {file_name} ({len(content_response.content)} bytes)")
-                                                else:
-                                                    print(f"   [WARNING] Failed to download {file_name}: {content_response.status_code}")
-                                                    attachment_info['content'] = b''
-                                            except Exception as download_error:
-                                                print(f"   [ERROR] Download failed for {file_name}: {download_error}")
-                                                attachment_info['content'] = b''
-                                        else:
-                                            attachment_info['content'] = b''
-                                        
-                                        processed_attachments.append(attachment_info)
-                                    
-                                    attachments_found = True
-                                    print(f"   [CHANGE ATTACHMENT] Found {len(attachments)} attachments for change {change_id} using: {pattern}")
-                                    break
-                                    
-                            elif response.status_code == 404:
-                                continue  # Try next endpoint pattern
-                            else:
-                                print(f"   [WARNING] Attachment fetch failed for change {change_id} at {pattern}: {response.status_code}")
-                                continue
-                                
-                        except Exception as e:
-                            print(f"Attachment endpoint {pattern} error for change {change_id}: {e}")
-                            continue
-                    
-                    # Store results (empty list if no attachments found)
-                    all_attachments[change_id] = processed_attachments
-                    
-                    if not attachments_found:
-                        print(f"   [INFO] No attachments found for change {change_id} (tried {len(endpoint_patterns)} endpoints)")
-                
-                print(f"[CHANGE ATTACHMENT] Processed chunk {i//chunk_size + 1}/{(len(change_ids)-1)//chunk_size + 1}")
-            
-            # Apply attachment data to changes
-            for change in changes:
-                change_id = str(change.get('id', ''))
-                if change_id and change_id in all_attachments:
-                    attachments = all_attachments[change_id]
-                    change['attachments'] = attachments
-                    change['attachmentUrls'] = [att['download_url'] for att in attachments if att['download_url']]
-                    
-                    print(f"[CHANGE ATTACHMENT] ✅ Applied {len(attachments)} attachments to change {change_id}")
-                    logging.info(f"[CHANGE ATTACHMENT] ✅ Applied {len(attachments)} attachments to change {change_id}")
-                    
-                    # DEBUG: Log attachment details
-                    for att in attachments:
-                        logging.info(f"[CHANGE ATTACHMENT] Attachment: {att.get('name')} ({len(att.get('content', b''))} bytes)")
-                else:
-                    change['attachments'] = []
-                    change['attachmentUrls'] = []
-            
-            total_attachments = sum(len(all_attachments.get(str(chg.get('id', '')), [])) for chg in changes)
-            print(f"[CHANGE ATTACHMENT] ✅ Completed batch attachment enrichment: {total_attachments} total attachments found")
-            logging.info(f"[CHANGE ATTACHMENT] ✅ Completed batch attachment enrichment: {total_attachments} total attachments found")
-            
-        except Exception as e:
-            print(f"[CHANGE ATTACHMENT] ❌ Batch attachment enrichment failed: {e}")
-            # Fallback safety - set empty attachments for all changes
-            for change in changes:
-                change['attachments'] = []
-                change['attachmentUrls'] = []
     
     def _apply_enhanced_enrichment_to_incident(self, incident: Dict) -> Dict:
         """Apply enhanced enrichment to a single incident with detailed logging"""
@@ -1568,6 +1506,211 @@ class OptimizedSolarwindsDataEnricher:
                 record.setdefault('groupAssigneeName', '')
         
         return records
+    
+    def _enrich_changes_attachments_batch(self, changes: List[Dict]):
+        """
+        Enrich changes with attachment information using batch processing
+        Based on ServiceNow pattern - fetches attachments for change_request table
+        """
+        logging.info(f"[ATTACHMENT BATCH] _enrich_changes_attachments_batch called with {len(changes)} changes")
+        
+        if not changes:
+            logging.warning(f"[ATTACHMENT BATCH] No changes provided, returning early")
+            return
+        
+        try:
+            # Collect all change IDs
+            change_ids = []
+            for change in changes:
+                change_id = change.get('id')
+                if change_id:
+                    change_ids.append(str(change_id))
+            
+            if not change_ids:
+                # No valid change IDs, set empty attachments for all
+                for change in changes:
+                    change['attachments'] = []
+                    change['attachmentUrls'] = []
+                return
+            
+            # Bulk fetch attachments for all changes
+            chunk_size = 50
+            all_attachments = {}  # change_id -> [attachments]
+            
+            for i in range(0, len(change_ids), chunk_size):
+                chunk = change_ids[i:i + chunk_size]
+                
+                # SolarWinds API endpoint patterns for change attachments
+                for change_id in chunk:
+                    attachments_found = False
+                    processed_attachments = []
+                    
+                    # Try multiple endpoint patterns for changes
+                    endpoint_patterns = [
+                        f"/changes/{change_id}.json?layout=long",  # Primary: includes attachments per API docs
+                        f"/changes/{change_id}/attachments.json",
+                        f"/changes/{change_id}/attachments",
+                        f"/attachments.json?change_id={change_id}",
+                        f"/changes/{change_id}.json?include=attachments"
+                    ]
+                    
+                    for pattern in endpoint_patterns:
+                        if attachments_found:
+                            break
+                            
+                        try:
+                            url = f"{self.connector._build_base_url()}{pattern}"
+                            response = self.connector._make_authenticated_request(url, 'GET')
+                            
+                            if response.status_code == 200:
+                                data = response.json()
+                                
+                                # DEBUG: Log API response structure
+                                logging.info(f"[ATTACHMENT DEBUG] API endpoint {pattern} returned keys: {list(data.keys()) if isinstance(data, dict) else 'list'}")
+                                if isinstance(data, dict) and 'change' in data:
+                                    logging.info(f"[ATTACHMENT DEBUG] change object keys: {list(data['change'].keys()) if isinstance(data['change'], dict) else 'not a dict'}")
+                                    if isinstance(data['change'], dict) and 'attachments' in data['change']:
+                                        logging.info(f"[ATTACHMENT DEBUG] Found attachments key! Value: {data['change']['attachments']}")
+                                
+                                # Handle different response structures
+                                attachments = []
+                                if isinstance(data, list):
+                                    attachments = data
+                                elif isinstance(data, dict):
+                                    # For ?layout=long or ?include=attachments endpoints
+                                    if 'attachments' in data:
+                                        attachments = data.get('attachments', [])
+                                    elif 'change' in data and isinstance(data['change'], dict):
+                                        attachments = data['change'].get('attachments', [])
+                                    else:
+                                        # Try different keys where attachments might be
+                                        for key in ['files', 'documents']:
+                                            if key in data:
+                                                attachments = data[key] if isinstance(data[key], list) else []
+                                                break
+                                
+                                logging.info(f"[ATTACHMENT DEBUG] Parsed {len(attachments)} attachments from response for change {change_id}")
+                                
+                                if attachments:
+                                    # Use UniversalAttachmentService for proper attachment handling
+                                    # This ensures content bytes are properly downloaded and stored
+                                    try:
+                                        # Prepare attachments for batch download
+                                        attachments_to_download = []
+                                        for attachment in attachments:
+                                            file_name = attachment.get('name', attachment.get('filename', attachment.get('file_name', '')))
+                                            download_url = attachment.get('url', attachment.get('download_url', ''))
+                                            
+                                            if download_url:
+                                                attachments_to_download.append({
+                                                    'id': attachment.get('id'),
+                                                    'name': file_name,
+                                                    'url': download_url,
+                                                    'content_type': attachment.get('content_type', attachment.get('mime_type', '')),
+                                                    'size': attachment.get('size', attachment.get('file_size', 0)),
+                                                    'source_type': 'solarwinds'
+                                                })
+                                        
+                                        # Download attachments using universal service (needs async context manager)
+                                        if attachments_to_download:
+                                            # Helper async function to properly use UniversalAttachmentService context manager
+                                            async def download_with_service():
+                                                async with UniversalAttachmentService(max_concurrent_downloads=5) as attachment_service:
+                                                    return await attachment_service.download_attachments_batch(attachments_to_download)
+                                            
+                                            # Create new event loop for worker thread (asyncio.get_event_loop() fails in threads)
+                                            try:
+                                                loop = asyncio.get_running_loop()
+                                            except RuntimeError:
+                                                # No event loop in current thread, create a new one
+                                                loop = asyncio.new_event_loop()
+                                                asyncio.set_event_loop(loop)
+                                            
+                                            downloaded_attachments = loop.run_until_complete(download_with_service())
+                                            
+                                            # Convert ProcessedAttachment objects to dict format for Freshservice
+                                            for processed_att in downloaded_attachments:
+                                                if processed_att:  # Skip None results (failed downloads)
+                                                    attachment_info = {
+                                                        'name': processed_att.name,
+                                                        'filename': processed_att.name,
+                                                        'file_name': processed_att.name,
+                                                        'content': processed_att.content,  # CRITICAL: bytes content
+                                                        'content_type': processed_att.content_type,
+                                                        'size': len(processed_att.content),
+                                                        'attachment_url': processed_att.original_url,
+                                                        'download_url': processed_att.original_url
+                                                    }
+                                                    processed_attachments.append(attachment_info)
+                                                    logging.info(f"[ATTACHMENT] Downloaded attachment {processed_att.name} for change {change_id} ({len(processed_att.content)} bytes)")
+                                            
+                                            attachments_found = True
+                                            logging.info(f"[ATTACHMENT] Successfully downloaded {len(processed_attachments)} attachments for change {change_id} using UniversalAttachmentService")
+                                            break
+                                        else:
+                                            logging.warning(f"[ATTACHMENT] No valid download URLs found for change {change_id}")
+                                            
+                                    except Exception as service_error:
+                                        logging.error(f"[ATTACHMENT] UniversalAttachmentService failed for change {change_id}: {service_error}")
+                                        # Fall back to basic attachment info without content
+                                        for attachment in attachments:
+                                            file_name = attachment.get('name', attachment.get('filename', attachment.get('file_name', '')))
+                                            download_url = attachment.get('url', attachment.get('download_url', ''))
+                                            attachment_info = {
+                                                'id': attachment.get('id'),
+                                                'name': file_name,
+                                                'filename': file_name,
+                                                'file_name': file_name,
+                                                'size': attachment.get('size', attachment.get('file_size', 0)),
+                                                'content_type': attachment.get('content_type', attachment.get('mime_type', '')),
+                                                'attachment_url': download_url,
+                                                'download_url': download_url
+                                            }
+                                            processed_attachments.append(attachment_info)
+                                    
+                                    attachments_found = True
+                                    logging.info(f"[ATTACHMENT] Found {len(attachments)} attachments for change {change_id} using endpoint: {pattern}")
+                                    break
+                                    
+                            elif response.status_code == 404:
+                                continue  # Try next endpoint pattern
+                            else:
+                                logging.warning(f"[ATTACHMENT] Attachment fetch failed for change {change_id} at {pattern}: {response.status_code}")
+                                continue
+                                
+                        except Exception as e:
+                            logging.error(f"[ATTACHMENT] Attachment endpoint {pattern} error for change {change_id}: {e}")
+                            continue
+                    
+                    # Store results (empty list if no attachments found)
+                    all_attachments[change_id] = processed_attachments
+                    
+                    if not attachments_found and processed_attachments:
+                        logging.info(f"[ATTACHMENT] No attachments found for change {change_id}")
+                
+                logging.info(f"[ATTACHMENT] Processed attachments for changes chunk {i//chunk_size + 1}")
+            
+            # Apply attachment data to changes
+            for change in changes:
+                change_id = str(change.get('id', ''))
+                if change_id and change_id in all_attachments:
+                    attachments = all_attachments[change_id]
+                    change['attachments'] = attachments
+                    change['attachmentUrls'] = [att['download_url'] for att in attachments if att.get('download_url')]
+                    logging.info(f"[ATTACHMENT] Added {len(attachments)} attachments to change {change_id}. Content sizes: {[len(att.get('content', b'')) for att in attachments]}")
+                else:
+                    change['attachments'] = []
+                    change['attachmentUrls'] = []
+                    logging.debug(f"[ATTACHMENT] No attachments for change {change_id}")
+            
+            logging.info(f"[ATTACHMENT] Completed batch attachment enrichment for {len(changes)} changes")
+            
+        except Exception as e:
+            logging.error(f"[ATTACHMENT] Batch change attachment enrichment failed: {e}")
+            # Set empty attachments for all changes if batch fails
+            for change in changes:
+                change['attachments'] = []
+                change['attachmentUrls'] = []
     
     def _make_authenticated_request(self, url: str, method: str = 'GET', **kwargs):
         """Make authenticated request using the connector's method"""
@@ -2469,13 +2612,23 @@ def get_solarwinds_changes_v1(**kwargs) -> Dict:
     Args:
         headers/sourceHeaders: Authentication headers (list or dict format)
         queryParams: Query parameters for filtering/pagination (list or dict format)
+        fieldMappings: Field mappings configuration from transformation JSON (optional)
         **kwargs: Additional arguments (e.g., numberOfProcessedRecords)
         
     Returns:
         Dict with status_code and body (always includes 'changes' key and 'meta')
+    
+    Environment Variables:
+        DISABLE_CHANGE_PLANNING_FIELDS: When set to 'true', do not include the
+            planning_fields object in each change (avoids FreshService invalid_field
+            errors for Change entities). Default: false.
+        MERGE_PLANNING_FIELDS_INTO_DESCRIPTION: When planning fields are disabled,
+            control whether their textual content is appended to the change
+            description. Default: true.
     """
     import sys
     import logging
+    import os
     
     # Debug tracking
     if not hasattr(get_solarwinds_changes_v1, "_invocation_count"):
@@ -2516,10 +2669,6 @@ def get_solarwinds_changes_v1(**kwargs) -> Dict:
         # Add filters if provided
         if 'filters' in query_dict and query_dict['filters']:
             query_params['filters'] = query_dict['filters']
-        
-        # Pass through enable_attachment_enrichment flag for enricher
-        if 'enable_attachment_enrichment' in query_dict:
-            query_params['enable_attachment_enrichment'] = query_dict['enable_attachment_enrichment']
         
         # Build the API URL
         url = f"{connector._build_base_url()}/changes.json"
@@ -2574,28 +2723,91 @@ def get_solarwinds_changes_v1(**kwargs) -> Dict:
         data = response.json()
         changes = data if isinstance(data, list) else data.get('changes', [])
         
-        # Enrich changes with attachments if enabled
+        # Extract planning_fields_mapping from fieldMappings config
+        field_mappings = kwargs.get('fieldMappings', [])
+        planning_fields_mapping = _extract_planning_fields_mapping(field_mappings)
+        
+        # Feature flags (env based) for planning_fields handling
+        # UPDATED: Freshservice Changes API DOES support planning_fields with correct structure!
+        # Structure: { field_name: { description: str } }
+        disable_planning_fields = os.getenv("DISABLE_CHANGE_PLANNING_FIELDS", "false").lower() == "true"
+        merge_planning_into_description = os.getenv("MERGE_PLANNING_FIELDS_INTO_DESCRIPTION", "false").lower() == "true"
+        map_planning_to_custom = os.getenv("MAP_PLANNING_FIELDS_TO_CUSTOM_FIELDS", "false").lower() == "true"
+
+        # Add planning fields to each change based on available SolarWinds data
+        for change in changes:
+            # DEBUG: Log available change fields
+            logging.info(f"[DEBUG] Change ID {change.get('id')} has these fields: {list(change.keys())}")
+            logging.info(f"[DEBUG] Change data sample: reason={change.get('reason')}, change_plan={change.get('change_plan')}, rollback_plan={change.get('rollback_plan')}")
+            
+            planning_fields = build_planning_fields_from_change(change, planning_fields_mapping)
+            logging.info(f"[DEBUG] build_planning_fields_from_change returned: {planning_fields}")
+            logging.info(f"[DEBUG] disable_planning_fields={disable_planning_fields}, planning_fields_empty={not planning_fields}, planning_fields_count={len(planning_fields) if planning_fields else 0}")
+            
+            # Option 1: Use native planning_fields (DEFAULT - now working!)
+            if not disable_planning_fields and planning_fields:
+                change['planning_fields'] = planning_fields
+                logging.info(f"[PLANNING MIGRATION] Added planning_fields to Change ID {change.get('id', 'unknown')} with {len(planning_fields)} fields")
+            else:
+                logging.warning(f"[DEBUG] NOT adding planning_fields. disable_planning_fields={disable_planning_fields}, planning_fields={bool(planning_fields)}")
+            
+            # Option 2: Map planning_fields content into custom_fields (if enabled)
+            if map_planning_to_custom and planning_fields:
+                # Resolve / allow override of custom field keys via environment variables
+                cf_reason_key = os.getenv("CF_REASON_FOR_CHANGE_KEY", "cf_reason_for_change")
+                cf_impact_key = os.getenv("CF_IMPACT_KEY", "cf_impact")
+                cf_rollout_key = os.getenv("CF_ROLLOUT_PLAN_KEY", "cf_rollout_plan")
+                cf_backout_key = os.getenv("CF_BACKOUT_PLAN_KEY", "cf_backout_plan")
+
+                custom_fields = change.get('custom_fields', {}) or {}
+
+                def add_cf(cf_key: str, planning_key: str):
+                    field_data = planning_fields.get(planning_key, {})
+                    desc = field_data.get('description_text') or field_data.get('description_html', '')
+                    if desc and isinstance(desc, str) and desc.strip():
+                        # Truncate overly large values defensively (Freshservice text custom fields have limits)
+                        custom_fields[cf_key] = desc[:8000]
+
+                add_cf(cf_reason_key, 'reason_for_change')
+                add_cf(cf_impact_key, 'change_impact')  # Note: using 'change_impact' not 'impact'
+                add_cf(cf_rollout_key, 'rollout_plan')
+                add_cf(cf_backout_key, 'backout_plan')
+
+                if custom_fields:
+                    change['custom_fields'] = custom_fields
+                    logging.info(f"[PLANNING MIGRATION] Mapped planning_fields to custom_fields for Change ID {change.get('id', 'unknown')}")
+            
+            # Optional: merge planning content into description as formatted text
+            if merge_planning_into_description and planning_fields:
+                existing_desc = change.get('description') or ""
+                # Build a consolidated planning info block
+                planning_text_parts = []
+                def add_block(title: str, key: str):
+                    val = planning_fields.get(key, {}).get('description')
+                    if val:
+                        planning_text_parts.append(f"{title}:\n{val}")
+                add_block("Reason for Change", 'reason_for_change')
+                add_block("Impact", 'impact')
+                add_block("Rollout Plan", 'rollout_plan')
+                add_block("Backout Plan", 'backout_plan')
+                if planning_text_parts:
+                    merged_block = "\n\n=== Change Planning Information ===\n" + "\n\n".join(planning_text_parts)
+                    if existing_desc:
+                        new_desc = existing_desc + merged_block
+                    else:
+                        new_desc = merged_block.lstrip()  # Remove leading newlines if no existing desc
+                    change['description'] = new_desc
+                    logging.info(f"[PLANNING MIGRATION] Merged planning_fields into description for Change ID {change.get('id', 'unknown')}")
+                # Enrich changes with attachments if enabled
         if ATTACHMENT_ENRICHMENT_ENABLED and changes:
             try:
-                print(f"[DEBUG] Calling enricher with query_params: {query_params}")
                 enricher = OptimizedSolarwindsDataEnricher(connector)
-                changes = enricher.enrich_changes_optimized(changes, query_params)
-                print(f"[DEBUG] Enrichment completed, changes count: {len(changes)}")
-                logging.info(f"[DEBUG] Enrichment completed, changes count: {len(changes)}")
-                
-                # DEBUG: Log attachment data for each change
-                for change in changes:
-                    attachments = change.get('attachments', [])
-                    change_id = change.get('id', 'unknown')
-                    logging.info(f"[DEBUG] Change {change_id}: {len(attachments)} attachments")
-                    for i, att in enumerate(attachments):
-                        att_name = att.get('name', 'unknown')
-                        att_size = len(att.get('content', b'')) if att.get('content') else 0
-                        logging.info(f"[DEBUG] Change {change_id} attachment {i+1}: {att_name} ({att_size} bytes)")
+                # FIXED: Pass query_dict (contains enable_attachment_enrichment) instead of query_params (API params only)
+                changes = enricher.enrich_changes_optimized(changes, query_dict)
+                logging.info(f"[ATTACHMENT] Completed attachment enrichment for {len(changes)} changes")
             except Exception as enrich_error:
                 print(f"[WARNING] Enrichment failed: {enrich_error}")
-                import traceback
-                traceback.print_exc()
+                logging.error(f"[ATTACHMENT] Enrichment failed: {enrich_error}")
                 # Continue with unenriched data
         
         # Build metadata
