@@ -1233,17 +1233,20 @@ def create_freshservice_changes(body: Dict, **kwargs) -> Dict:
                 except Exception as e:
                     logging.error(f"Error downloading attachment {file_name}: {e}")
             
-            if files:
-                # Send as multipart form data
-                resp = requests.post(url, auth=auth, data=form_data, files=files)
+            if planning_fields:
+                # Send as JSON, without any attachments
+                change_data['planning_fields'] = planning_fields
+                
+            logging.info(f"Added planning_fields to JSON payload: {list(planning_fields.keys())}")
+            resp = requests.post(url, auth=auth, json=change_data)
+            logging.info("Sent JSON data (no attachments)")
+            change_id = resp.json().get('change', {}).get('id')
+            logging.info(f"Sent JSON data response: {change_id}: {resp.json()}: {resp}")
+            if files and change_id:
+                url = f"https://{domain}.freshservice.com/api/v2/changes/{change_id}"
+                resp = requests.put(url, auth=auth, files=files)
                 logging.info(f"Sent multipart form data with {len(files)} attachments")
-            else:
-                # No attachments: send as JSON
-                if planning_fields:
-                    change_data['planning_fields'] = planning_fields
-                    logging.info(f"Added planning_fields to JSON payload: {list(planning_fields.keys())}")
-                resp = requests.post(url, auth=auth, json=change_data)
-                logging.info("Sent JSON data (no attachments)")
+                logging.info(f"Sent multipart form data response: {resp}")
         else:
             # No attachments: send as JSON
             if planning_fields:
